@@ -28,9 +28,196 @@
 
 body{
     overflow-x:hidden;
+    padding: 2%;
+}
+/* =========================
+OVERLAY (HIDDEN BY DEFAULT FIX)
+========================= */
+.order-modal {
+    display: none; /* 👈 IMPORTANT: hidden on load */
+    position: fixed;
+    inset: 0;
+
+    background: rgba(0,0,0,0.6);
+
+    justify-content: center;
+    align-items: center;
+
+    z-index: 9999;
 }
 
+/* =========================
+SMALL MODAL BOX
+========================= */
+.order-box {
+    width: 100%;
+    max-width: 420px;
+    max-height: 90vh;
 
+    overflow-y: auto;
+
+    background: #fff;
+    border-radius: 14px;
+
+    padding: 16px;
+
+    box-shadow: 0 10px 35px rgba(0,0,0,0.3);
+
+    animation: pop 0.2s ease-in-out;
+}
+
+/* animation */
+@keyframes pop {
+    from {
+        transform: scale(0.85);
+        opacity: 0;
+    }
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/* =========================
+HEADER
+========================= */
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    margin-bottom: 10px;
+}
+
+.modal-header h3 {
+    font-size: 16px;
+    font-weight: 700;
+}
+
+/* FIX: your HTML uses inline button, so support it */
+.modal-header button {
+    border: none;
+    background: transparent;
+    font-size: 22px;
+    cursor: pointer;
+}
+
+/* =========================
+SUMMARY BOX
+========================= */
+.order-summary {
+    background: #f8f8f8;
+    padding: 10px;
+    border-radius: 10px;
+
+    margin-bottom: 12px;
+}
+
+.order-summary h4 {
+    font-size: 13px;
+    margin-bottom: 8px;
+}
+
+.summary-row {
+    display: flex;
+    justify-content: space-between;
+
+    font-size: 13px;
+    margin-bottom: 6px;
+}
+
+/* =========================
+QUANTITY
+========================= */
+.quantity-box {
+    margin-bottom: 12px;
+}
+
+.qty-controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    margin-top: 5px;
+}
+
+.qty-controls button {
+    width: 32px;
+    height: 32px;
+
+    border: none;
+    background: #eee;
+
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+/* =========================
+INPUTS
+========================= */
+.order-box input,
+.order-box textarea {
+    width: 100%;
+    padding: 10px;
+
+    margin-bottom: 10px;
+
+    border: 1px solid #ddd;
+    border-radius: 8px;
+
+    font-size: 14px;
+}
+
+.order-box textarea {
+    resize: none;
+    height: 70px;
+}
+
+/* =========================
+BUTTONS (FIX: SAME LINE CART + ORDER STYLE READY)
+========================= */
+.confirm-btn {
+    width: 100%;
+    padding: 12px;
+
+    background: #ff6b00;
+    color: #fff;
+
+    border: none;
+    border-radius: 8px;
+
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.confirm-btn:hover {
+    background: #e65c00;
+}
+
+.cancel-btn {
+    width: 100%;
+    padding: 10px;
+
+    margin-top: 8px;
+
+    background: #eee;
+    border: none;
+
+    border-radius: 8px;
+
+    cursor: pointer;
+}
+
+/* =========================
+MOBILE FIX
+========================= */
+@media(max-width:768px){
+    .order-box{
+        max-height: 90vh;
+        overflow-y: auto;
+        margin: 10px;
+    }
+}
 /* ======================
 TOP BAR
 ====================== */
@@ -141,6 +328,94 @@ padding:20px;
 display:none;
 }
 
+/* =========================
+PRODUCT ACTION BUTTON ROW
+========================= */
+
+.product-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+/* =========================
+CART BUTTON (ICON STYLE)
+========================= */
+
+.cart-btn {
+  width: 42px;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: none;
+  border-radius: 8px;
+  background: #fff3e6;
+  cursor: pointer;
+
+  transition: 0.3s ease;
+}
+
+.cart-btn i {
+  color: #ff6b00;
+  font-size: 20px;
+}
+
+/* hover effect */
+.cart-btn:hover {
+  background: #ff6b00;
+}
+
+.cart-btn:hover i {
+  color: #fff;
+}
+
+/* =========================
+ORDER BUTTON (FULL BUTTON)
+========================= */
+
+.order-btn {
+  flex: 1; /* makes it take remaining space */
+  height: 42px;
+
+  border: none;
+  border-radius: 8px;
+
+  background: #ff6b00;
+  color: #fff;
+
+  font-weight: 600;
+  cursor: pointer;
+
+  transition: 0.3s ease;
+}
+
+/* hover */
+.order-btn:hover {
+  background: #e65c00;
+}
+
+/* =========================
+MOBILE RESPONSIVE FIX
+========================= */
+
+@media (max-width: 480px) {
+  .product-actions {
+    gap: 8px;
+  }
+
+  .cart-btn {
+    width: 40px;
+    height: 40px;
+  }
+
+  .order-btn {
+    font-size: 14px;
+  }
+}
 .category-section{
 display:none;
 }
@@ -152,9 +427,66 @@ color:#2144a0;
 }
 
 .product-grid{
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
-gap:20px;
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:25px;
+}
+@media (max-width:768px){
+
+.product-grid{
+    grid-template-columns:repeat(2,1fr);
+    gap:12px;
+}
+
+.product-card{
+    width:100%;
+}
+
+.product-card img{
+    height:140px;
+    object-fit:cover;
+}
+
+.product-info h3{
+    font-size:14px;
+    line-height:1.4;
+}
+
+.price{
+    font-size:15px;
+}
+
+}
+.product-card{
+    background:#fff;
+    border-radius:18px;
+    overflow:hidden;
+    box-shadow:0 5px 25px rgba(0,0,0,.08);
+    transition:.3s;
+}
+
+.product-card:hover{
+    transform:translateY(-5px);
+}
+
+.product-card img{
+    width:100%;
+    height:250px;
+    object-fit:cover;
+}
+
+.product-info{
+    padding:18px;
+}
+
+.product-info h3{
+    margin-bottom:10px;
+}
+
+.price{
+    font-size:22px;
+    font-weight:700;
+    color:#ffb300;
 }
 
 .product-card{
@@ -214,14 +546,21 @@ color:#2144a0;
 margin-bottom:15px;
 }
 
-.order-btn{
-width:100%;
-padding:12px;
-border:none;
-background:#2144a0;
-color:white;
-cursor:pointer;
-font-weight:bold;
+.order-btn {
+    width: auto;          /* 👈 removes full width */
+    padding: 3px;    /* smaller padding */
+    border: none;
+    background: #2144a0;
+    color: white;
+    cursor: pointer;
+    font-weight: bold;
+
+    border-radius: 6px;   /* nicer look */
+    font-size: 13px;
+
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
 }
 
 
@@ -271,35 +610,91 @@ font-size:14px;
 color:#ffd400;
 }
 
-.modal{
-display:none;
-position:fixed;
-top:0;
-left:0;
-width:100%;
-height:100%;
-background:rgba(0,0,0,.7);
-justify-content:center;
-align-items:center;
-padding:20px;
-z-index:5000;
+ /* =========================
+   BACKDROP (DIM BACKGROUND)
+========================= */
+.modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+
+  width: 100%;
+  height: 100%;
+
+  background: rgba(0,0,0,0.6);
+
+  justify-content: center;
+  align-items: center;
+
+  z-index: 9999;
 }
 
-.modal-content{
-background:white;
-width:100%;
-max-width:500px;
-border-radius:10px;
-padding:20px;
-text-align:center;
+/* =========================
+   SMALL CENTERED FORM BOX
+========================= */
+.modal-content {
+  width: 100%;
+  max-width: 420px;   /* 👈 THIS MAKES IT SMALL */
+  background: #fff;
+
+  border-radius: 12px;
+  padding: 18px;
+
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+
+  animation: pop 0.25s ease-in-out;
 }
 
-.modal-content img{
-width:100%;
-height:250px;
-object-fit:cover;
-border-radius:10px;
-margin-bottom:15px;
+/* animation */
+@keyframes pop {
+  from {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* =========================
+   FORM ELEMENTS CLEANUP
+========================= */
+.modal-content input,
+.modal-content select,
+.modal-content textarea {
+  width: 100%;
+  padding: 10px;
+
+  margin-top: 8px;
+  margin-bottom: 12px;
+
+  border: 1px solid #ddd;
+  border-radius: 8px;
+
+  font-size: 14px;
+}
+
+/* =========================
+   BUTTON INSIDE FORM
+========================= */
+.modal-content button {
+  width: 100%;
+  padding: 12px;
+
+  background: #ff6b00;
+  color: white;
+
+  border: none;
+  border-radius: 8px;
+
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.modal-content button:hover {
+  background: #e65c00;
 }
 
 .close{
@@ -401,6 +796,7 @@ font-size:20px;
 
 /* FOOTER */
 .tank-footer{
+  margin: -2%;
   background:#0b2a5b;
   color:white;
   display:flex;
@@ -1514,15 +1910,14 @@ MOBILE
 
 </section>
 
+<!-- ===================== TANKS SECTION ===================== -->
 <section class="category-section" id="tanks">
 
 <h2 class="category-title">Our Products</h2>
 
+<div class="product-grid">
 
-
-
-
-<!-- 1000L LOFT -->
+<!-- 1000L -->
 <div class="product-card">
   <img src="kentank1.jfif" alt="1000L Loft Tank">
 
@@ -1530,10 +1925,19 @@ MOBILE
     <h3>1,000L Rectangular Loft Tank</h3>
     <div class="price">KSh 4,500</div>
 
-    <button class="order-btn"
-      onclick="event.stopPropagation();orderNow('1,000L Rectangular Loft Tank','4,500')">
-      Order Now
-    </button>
+    <div class="product-actions">
+
+      <button class="cart-btn"
+        onclick="event.stopPropagation();openOrderModal('1,000L Rectangular Loft Tank','1,000L','4500')">
+        <i class='bx bx-cart'></i>
+      </button>
+
+      <button class="order-btn"
+        onclick="event.stopPropagation();openOrderModal('1,000L Rectangular Loft Tank','1,000L','4500')">
+        order
+      </button>
+
+    </div>
   </div>
 </div>
 
@@ -1545,172 +1949,210 @@ MOBILE
     <h3>1,500L Standard Cylindrical Tank</h3>
     <div class="price">KSh 7,500</div>
 
-    <button class="order-btn"
-      onclick="event.stopPropagation();orderNow('1,500L Standard Cylindrical Tank','7,500')">
-      Order Now
-    </button>
+    <div class="product-actions">
+
+      <button class="cart-btn"
+        onclick="event.stopPropagation();openOrderModal('1,500L Standard Cylindrical Tank','1,500L','7500')">
+        <i class='bx bx-cart'></i>
+      </button>
+
+      <button class="order-btn"
+        onclick="event.stopPropagation();openOrderModal('1,500L Standard Cylindrical Tank','1,500L','7500')">
+        order
+      </button>
+
+    </div>
   </div>
 </div>
 
-<!-- 2000L DELUXE -->
+<!-- 2000L -->
 <div class="product-card">
-  <img src="kentank1.jfif" alt="2000L Deluxe Tank">
+  <img src="kentank1.jfif" alt="2000L Tank">
 
   <div class="product-info">
     <h3>2,000L Deluxe Cylindrical Tank</h3>
     <div class="price">KSh 10,500</div>
 
-    <button class="order-btn"
-      onclick="event.stopPropagation();orderNow('2,000L Deluxe Cylindrical Tank','10,500')">
-      Order Now
-    </button>
+    <div class="product-actions">
+
+      <button class="cart-btn"
+        onclick="event.stopPropagation();openOrderModal('2,000L Deluxe Cylindrical Tank','2,000L','10500')">
+        <i class='bx bx-cart'></i>
+      </button>
+
+      <button class="order-btn"
+        onclick="event.stopPropagation();openOrderModal('2,000L Deluxe Cylindrical Tank','2,000L','10500')">
+        order
+      </button>
+
+    </div>
   </div>
 </div>
-  <div class="product-card">
-  <img src="kentank1.jfif" alt="2000L Deluxe Tank">
+
+<!-- 3000L -->
+<div class="product-card">
+  <img src="kentank1.jfif">
 
   <div class="product-info">
     <h3>3,000L Deluxe Cylindrical Tank</h3>
     <div class="price">KSh 14,500</div>
 
-    <button class="order-btn"
-      onclick="event.stopPropagation();orderNow('3,000L Deluxe Cylindrical Tank','14,500')">
-      Order Now
-    </button>
+    <div class="product-actions">
+      <button class="cart-btn"
+        onclick="event.stopPropagation();openOrderModal('3,000L Deluxe Cylindrical Tank','3,000L','14500')">
+        <i class='bx bx-cart'></i>
+      </button>
+
+      <button class="order-btn"
+        onclick="event.stopPropagation();openOrderModal('3,000L Deluxe Cylindrical Tank','3,000L','14500')">
+        order
+      </button>
+    </div>
   </div>
 </div>
-<div class="product-card">
-  <img src="kentank1.jfif" alt="2000L Deluxe Tank">
 
-   <div class="product-info">
+<!-- 3500L -->
+<div class="product-card">
+  <img src="kentank1.jfif">
+
+  <div class="product-info">
     <h3>3,500L Deluxe Cylindrical Tank</h3>
     <div class="price">KSh 16,500</div>
 
-    <button class="order-btn"
-      onclick="event.stopPropagation();orderNow('3,500L Deluxe Cylindrical Tank','16500')">
-      Order Now
-    </button>
+    <div class="product-actions">
+      <button class="cart-btn"
+        onclick="event.stopPropagation();openOrderModal('3,500L Deluxe Cylindrical Tank','3,500L','16500')">
+        <i class='bx bx-cart'></i>
+      </button>
+
+      <button class="order-btn"
+        onclick="event.stopPropagation();openOrderModal('3,500L Deluxe Cylindrical Tank','3,500L','16500')">
+        order
+      </button>
+    </div>
   </div>
 </div>
+
+<!-- 4000L -->
 <div class="product-card">
-  <img src="kentank1.jfif" alt="2000L Deluxe Tank">
+  <img src="kentank1.jfif">
 
   <div class="product-info">
     <h3>4,000L Deluxe Cylindrical Tank</h3>
     <div class="price">KSh 18,500</div>
 
-    <button class="order-btn"
-      onclick="event.stopPropagation();orderNow('4,000L Deluxe Cylindrical Tank','18,500')">
-      Order Now
-    </button>
+    <div class="product-actions">
+      <button class="cart-btn"
+        onclick="event.stopPropagation();openOrderModal('4,000L Deluxe Cylindrical Tank','4,000L','18500')">
+        <i class='bx bx-cart'></i>
+      </button>
+
+      <button class="order-btn"
+        onclick="event.stopPropagation();openOrderModal('4,000L Deluxe Cylindrical Tank','4,000L','18500')">
+        order
+      </button>
+    </div>
   </div>
 </div>
-  <div class="product-card">
-  <img src="kentank1.jfif" alt="2000L Deluxe Tank">
+
+<!-- 5000L -->
+<div class="product-card">
+  <img src="kentank1.jfif">
 
   <div class="product-info">
     <h3>5,000L Deluxe Cylindrical Tank</h3>
     <div class="price">KSh 24,500</div>
 
-    <button class="order-btn"
-      onclick="event.stopPropagation();orderNow('5,000L Deluxe Cylindrical Tank','24,500')">
-      Order Now
-    </button>
+    <div class="product-actions">
+      <button class="cart-btn"
+        onclick="event.stopPropagation();openOrderModal('5,000L Deluxe Cylindrical Tank','5,000L','24500')">
+        <i class='bx bx-cart'></i>
+      </button>
+
+      <button class="order-btn"
+        onclick="event.stopPropagation();openOrderModal('5,000L Deluxe Cylindrical Tank','5,000L','24500')">
+        order
+      </button>
+    </div>
   </div>
 </div>
-  <div class="product-card">
-  <img src="kentank1.jfif" alt="2000L Deluxe Tank">
+
+<!-- 6000L -->
+<div class="product-card">
+  <img src="kentank1.jfif">
 
   <div class="product-info">
     <h3>6,000L Deluxe Cylindrical Tank</h3>
     <div class="price">KSh 26,500</div>
 
-    <button class="order-btn"
-      onclick="event.stopPropagation();orderNow('6,000L Deluxe Cylindrical Tank','26,500')">
-      Order Now
-    </button>
+    <div class="product-actions">
+      <button class="cart-btn"
+        onclick="event.stopPropagation();openOrderModal('6,000L Deluxe Cylindrical Tank','6,000L','26500')">
+        <i class='bx bx-cart'></i>
+      </button>
+
+      <button class="order-btn"
+        onclick="event.stopPropagation();openOrderModal('6,000L Deluxe Cylindrical Tank','6,000L','26500')">
+        order
+      </button>
+    </div>
   </div>
 </div>
-  <div class="product-card">
-  <img src="kentank1.jfif" alt="2000L Deluxe Tank">
+
+<!-- 8000L -->
+<div class="product-card">
+  <img src="kentank1.jfif">
 
   <div class="product-info">
     <h3>8,000L Deluxe Cylindrical Tank</h3>
     <div class="price">KSh 32,500</div>
 
-    <button class="order-btn"
-      onclick="event.stopPropagation();orderNow('8,000L Deluxe Cylindrical Tank','32,500')">
-      Order Now
-    </button>
-  </div>
+    <div class="product-actions">
+      <button class="cart-btn"
+        onclick="event.stopPropagation();openOrderModal('8,000L Deluxe Cylindrical Tank','8,000L','32500')">
+        <i class='bx bx-cart'></i>
+      </button>
 
-<!-- 10000L DELUXE -->
+      <button class="order-btn"
+        onclick="event.stopPropagation();openOrderModal('8,000L Deluxe Cylindrical Tank','8,000L','32500')">
+        order
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- 10000L -->
 <div class="product-card">
-  <img src="kentank1.jfif" alt="10000L Deluxe Tank">
+  <img src="kentank1.jfif">
 
   <div class="product-info">
     <h3>10,000L Deluxe Cylindrical Tank</h3>
     <div class="price">KSh 48,500</div>
 
-    <button class="order-btn"
-      onclick="event.stopPropagation();orderNow('10,000L Deluxe Cylindrical Tank','48,500')">
-      Order Now
-    </button>
+    <div class="product-actions">
+      <button class="cart-btn"
+        onclick="event.stopPropagation();openOrderModal('10,000L Deluxe Cylindrical Tank','10,000L','48500')">
+        <i class='bx bx-cart'></i>
+      </button>
+
+      <button class="order-btn"
+        onclick="event.stopPropagation();openOrderModal('10,000L Deluxe Cylindrical Tank','10,000L','48500')">
+        order
+      </button>
+    </div>
   </div>
 </div>
-<!-- 10000L DELUXE -->
-<div class="product-card">
-  <img src="kentank1.jfif" alt="10000L Deluxe Tank">
 
-  <div class="product-info">
-    <h3>16,000L Deluxe Cylindrical Tank</h3>
-    <div class="price">KSh 98,500</div>
-
-    <button class="order-btn"
-      onclick="event.stopPropagation();orderNow('16,000L Deluxe Cylindrical Tank','98,500')">
-      Order Now
-    </button>
-  </div>
-</div>
-<!-- 10000L DELUXE -->
-<div class="product-card">
-  <img src="kentank1.jfif" alt="10000L Deluxe Tank">
-
-  <div class="product-info">
-    <h3>20,000L Deluxe Cylindrical Tank</h3>
-    <div class="price">KSh 147,500</div>
-
-    <button class="order-btn"
-      onclick="event.stopPropagation();orderNow('20,000L Deluxe Cylindrical Tank','147,500')">
-      Order Now
-    </button>
-  </div>
-</div>
-</div>
-<!-- 10000L DELUXE -->
-<div class="product-card">
-  <img src="kentank1.jfif" alt="10000L Deluxe Tank">
-
-  <div class="product-info">
-    <h3>24,000L Deluxe Cylindrical Tank</h3>
-    <div class="price">KSh 192,500</div>
-
-    <button class="order-btn"
-      onclick="event.stopPropagation();orderNow('24,000L Deluxe Cylindrical Tank','192,500')">
-      Order Now
-    </button>
-  </div>
 </div>
 </section>
 
+<!-- AGRICULTURE SECTION -->
 <!-- AGRICULTURE SECTION -->
 <section class="category-section" id="agriculture">
 
 <h2 class="category-title">Agriculture</h2>
 
-
-
-
+<div class="product-grid">
 
 <!-- ROUND PLANTER 1 -->
 <div class="product-card"
@@ -1727,10 +2169,17 @@ onclick="openProduct(
 <h3>Round Beige Planter – 50cm</h3>
 <div class="price">KSh 5,040</div>
 
-<button class="order-btn"
-onclick="event.stopPropagation();orderNow('Round Beige Planter 50cm','5040')">
-Order Now
-</button>
+<div class="product-actions">
+    <button class="cart-btn"
+        onclick="event.stopPropagation();openOrderModal('Round Beige Planter 50cm','5040')">
+        <i class='bx bx-cart'></i>
+    </button>
+
+    <button class="order-btn"
+        onclick="event.stopPropagation();openOrderModal('Round Beige Planter 50cm','5040')">
+        Order Now
+    </button>
+</div>
 
 </div>
 </div>
@@ -1750,10 +2199,17 @@ onclick="openProduct(
 <h3>Round Beige Planter – 50cm</h3>
 <div class="price">KSh 5,040</div>
 
-<button class="order-btn"
-onclick="event.stopPropagation();orderNow('Round Beige Planter 50cm','5040')">
-Order Now
-</button>
+<div class="product-actions">
+    <button class="cart-btn"
+        onclick="event.stopPropagation();openOrderModal('Round Beige Planter 50cm','5040')">
+        <i class='bx bx-cart'></i>
+    </button>
+
+    <button class="order-btn"
+        onclick="event.stopPropagation();openOrderModal('Round Beige Planter 50cm','5040')">
+        Order Now
+    </button>
+</div>
 
 </div>
 </div>
@@ -1773,10 +2229,17 @@ onclick="openProduct(
 <h3>Tall Rectangular Planter – 75cm</h3>
 <div class="price">KSh 9,180</div>
 
-<button class="order-btn"
-onclick="event.stopPropagation();orderNow('Tall Rectangular Planter','9180')">
-Order Now
-</button>
+<div class="product-actions">
+    <button class="cart-btn"
+        onclick="event.stopPropagation();openOrderModal('Tall Rectangular Planter','9180')">
+        <i class='bx bx-cart'></i>
+    </button>
+
+    <button class="order-btn"
+        onclick="event.stopPropagation();openOrderModal('Tall Rectangular Planter','9180')">
+        Order Now
+    </button>
+</div>
 
 </div>
 </div>
@@ -1796,10 +2259,17 @@ onclick="openProduct(
 <h3>Large Round Planter – 76cm</h3>
 <div class="price">KSh 11,250</div>
 
-<button class="order-btn"
-onclick="event.stopPropagation();orderNow('Large Round Planter 76cm','11250')">
-Order Now
-</button>
+<div class="product-actions">
+    <button class="cart-btn"
+        onclick="event.stopPropagation();openOrderModal('Large Round Planter 76cm','11250')">
+        <i class='bx bx-cart'></i>
+    </button>
+
+    <button class="order-btn"
+        onclick="event.stopPropagation();openOrderModal('Large Round Planter 76cm','11250')">
+        Order Now
+    </button>
+</div>
 
 </div>
 </div>
@@ -1819,10 +2289,17 @@ onclick="openProduct(
 <h3>Large Square Planter – 76cm</h3>
 <div class="price">KSh 11,250</div>
 
-<button class="order-btn"
-onclick="event.stopPropagation();orderNow('Large Square Planter 76cm','11250')">
-Order Now
-</button>
+<div class="product-actions">
+    <button class="cart-btn"
+        onclick="event.stopPropagation();openOrderModal('Large Square Planter 76cm','11250')">
+        <i class='bx bx-cart'></i>
+    </button>
+
+    <button class="order-btn"
+        onclick="event.stopPropagation();openOrderModal('Large Square Planter 76cm','11250')">
+        Order Now
+    </button>
+</div>
 
 </div>
 </div>
@@ -1842,10 +2319,17 @@ onclick="openProduct(
 <h3>Large Angular Planter – 76cm</h3>
 <div class="price">KSh 5,040</div>
 
-<button class="order-btn"
-onclick="event.stopPropagation();orderNow('Angular Planter 76cm','5040')">
-Order Now
-</button>
+<div class="product-actions">
+    <button class="cart-btn"
+        onclick="event.stopPropagation();openOrderModal('Angular Planter 76cm','5040')">
+        <i class='bx bx-cart'></i>
+    </button>
+
+    <button class="order-btn"
+        onclick="event.stopPropagation();openOrderModal('Angular Planter 76cm','5040')">
+        Order Now
+    </button>
+</div>
 
 </div>
 </div>
@@ -1865,17 +2349,23 @@ onclick="openProduct(
 <h3>Medium Round Planter – 61cm</h3>
 <div class="price">KSh 7,470</div>
 
-<button class="order-btn"
-onclick="event.stopPropagation();orderNow('Medium Round Planter 61cm','7470')">
-Order Now
-</button>
+<div class="product-actions">
+    <button class="cart-btn"
+        onclick="event.stopPropagation();openOrderModal('Medium Round Planter 61cm','7470')">
+        <i class='bx bx-cart'></i>
+    </button>
+
+    <button class="order-btn"
+        onclick="event.stopPropagation();openOrderModal('Medium Round Planter 61cm','7470')">
+        Order Now
+    </button>
+</div>
 
 </div>
 </div>
 
 </div>
 </section>
-
 <!-- BINS SECTION -->
 
 <section class="category-section" id="bins">
@@ -1884,9 +2374,7 @@ Order Now
 
 <div class="product-grid">
 
-
-
-<!-- 240L BIN -->
+<!-- 240L -->
 <div class="product-card"
 onclick="openProduct(
 '240L Dustbin',
@@ -1901,17 +2389,33 @@ onclick="openProduct(
 <h3>240L Dustbin</h3>
 <div class="price">KSh 5,900</div>
 
+<div class="product-actions">
+
+<button class="cart-btn"
+onclick="event.stopPropagation();
+openOrderModal(
+'240L Dustbin',
+'240 Litres',
+'5900'
+)">
+<i class='bx bx-cart' style="color:#ff6b00; font-size:20px;"></i>
+</button>
+
 <button class="order-btn"
-onclick="event.stopPropagation();orderNow('240L Dustbin','5900')">
-Order Now
+onclick="event.stopPropagation();
+openOrderModal(
+'240L Dustbin',
+'240 Litres',
+'5900'
+)">
+order
 </button>
 
 </div>
 </div>
+</div>
 
-
-
-<!-- 180L BIN -->
+<!-- 180L -->
 <div class="product-card"
 onclick="openProduct(
 '180L Garbage Bin with Wheels',
@@ -1926,15 +2430,33 @@ onclick="openProduct(
 <h3>180L Garbage Bin with Wheels</h3>
 <div class="price">KSh 14,850</div>
 
+<div class="product-actions">
+
+<button class="cart-btn"
+onclick="event.stopPropagation();
+openOrderModal(
+'180L Garbage Bin with Wheels',
+'180 Litres',
+'14850'
+)">
+<i class='bx bx-cart' style="color:#ff6b00; font-size:20px;"></i>
+</button>
+
 <button class="order-btn"
-onclick="event.stopPropagation();orderNow('180L Garbage Bin','14850')">
-Order Now
+onclick="event.stopPropagation();
+openOrderModal(
+'180L Garbage Bin with Wheels',
+'180 Litres',
+'14850'
+)">
+order
 </button>
 
 </div>
 </div>
+</div>
 
-<!-- 750L BIN -->
+<!-- 750L -->
 <div class="product-card"
 onclick="openProduct(
 '750L Garbage Bin',
@@ -1949,19 +2471,37 @@ onclick="openProduct(
 <h3>750L Garbage Bin</h3>
 <div class="price">KSh 45,450</div>
 
+<div class="product-actions">
+
+<button class="cart-btn"
+onclick="event.stopPropagation();
+openOrderModal(
+'750L Garbage Bin',
+'750 Litres',
+'45450'
+)">
+<i class='bx bx-cart' style="color:#ff6b00; font-size:20px;"></i>
+</button>
+
 <button class="order-btn"
-onclick="event.stopPropagation();orderNow('750L Garbage Bin','45450')">
-Order Now
+onclick="event.stopPropagation();
+openOrderModal(
+'750L Garbage Bin',
+'750 Litres',
+'45450'
+)">
+order
 </button>
 
 </div>
 </div>
+</div>
 
-<!-- 90L BIN + HANDLE -->
+<!-- 90L HANDLE -->
 <div class="product-card"
 onclick="openProduct(
-'90L Garbage Bin with Wheels & Handle',
-'Small mobile waste bin',
+'90L Bin with Wheels & Handle',
+'Mobile waste bin',
 'KES 10,800',
 'https://www.toptank.com/wp-content/uploads/2021/05/LACBIN28_Yellow_7-500x500.jpg'
 )">
@@ -1972,19 +2512,37 @@ onclick="openProduct(
 <h3>90L Bin with Wheels & Handle</h3>
 <div class="price">KSh 10,800</div>
 
-<button class="order-btn"
-onclick="event.stopPropagation();orderNow('90L Garbage Bin with Handle','10800')">
-Order Now
+<div class="product-actions">
+
+<button class="cart-btn"
+onclick="event.stopPropagation();
+openOrderModal(
+'90L Bin with Wheels & Handle',
+'90 Litres',
+'10800'
+)">
+<i class='bx bx-cart' style="color:#ff6b00; font-size:20px;"></i>
 </button>
 
+<button class="order-btn"
+onclick="event.stopPropagation();
+openOrderModal(
+'90L Bin with Wheels & Handle',
+'90 Litres',
+'10800'
+)">
+order
+</button>
+
+</div>
 </div>
 </div>
 
 <!-- 90L FOOT PEDAL -->
 <div class="product-card"
 onclick="openProduct(
-'90L Garbage Bin with Foot Pedal',
-'Pedal-operated hygienic bin',
+'90L Bin with Foot Pedal',
+'Hygienic pedal bin',
 'KES 12,825',
 'https://www.toptank.com/wp-content/uploads/2021/05/LACBIN34_Red_6-500x500.jpg'
 )">
@@ -1992,14 +2550,32 @@ onclick="openProduct(
 <img src="https://www.toptank.com/wp-content/uploads/2021/05/LACBIN34_Red_6-500x500.jpg">
 
 <div class="product-info">
-<h3>90L Bin with Wheels & Foot Pedal</h3>
+<h3>90L Bin with Foot Pedal</h3>
 <div class="price">KSh 12,825</div>
 
-<button class="order-btn"
-onclick="event.stopPropagation();orderNow('90L Garbage Bin Foot Pedal','12825')">
-Order Now
+<div class="product-actions">
+
+<button class="cart-btn"
+onclick="event.stopPropagation();
+openOrderModal(
+'90L Bin with Foot Pedal',
+'90 Litres',
+'12825'
+)">
+<i class='bx bx-cart' style="color:#ff6b00; font-size:20px;"></i>
 </button>
 
+<button class="order-btn"
+onclick="event.stopPropagation();
+openOrderModal(
+'90L Bin with Foot Pedal',
+'90 Litres',
+'12825'
+)">
+order
+</button>
+
+</div>
 </div>
 </div>
 
@@ -2018,16 +2594,35 @@ onclick="openProduct(
 <h3>90L Hexagonal Dustbin</h3>
 <div class="price">KSh 7,020</div>
 
-<button class="order-btn"
-onclick="event.stopPropagation();orderNow('90L Hexagonal Dustbin','7020')">
-Order Now
+<div class="product-actions">
+
+<button class="cart-btn"
+onclick="event.stopPropagation();
+openOrderModal(
+'90L Hexagonal Dustbin',
+'90 Litres',
+'7020'
+)">
+<i class='bx bx-cart' style="color:#ff6b00; font-size:20px;"></i>
 </button>
 
+<button class="order-btn"
+onclick="event.stopPropagation();
+openOrderModal(
+'90L Hexagonal Dustbin',
+'90 Litres',
+'7020'
+)">
+order
+</button>
+
+</div>
 </div>
 </div>
 
 </div>
 </section>
+
 <!-- ROAD SAFETY SECTION -->
 
 <section class="category-section" id="roadsafety">
@@ -2051,11 +2646,29 @@ onclick="openProduct(
 <h3>Angular Road Barrier</h3>
 <div class="price">KSh 8,775</div>
 
-<button class="order-btn"
-onclick="event.stopPropagation();orderNow('Angular Road Barrier','8775')">
-Order Now
+<div class="product-actions">
+
+<button class="cart-btn"
+onclick="event.stopPropagation();
+openOrderModal(
+'Angular Road Barrier',
+'Standard Unit',
+'8775'
+)">
+<i class='bx bx-cart' style="color:#ff6b00; font-size:20px;"></i>
 </button>
 
+<button class="order-btn"
+onclick="event.stopPropagation();
+openOrderModal(
+'Angular Road Barrier',
+'Standard Unit',
+'8775'
+)">
+order
+</button>
+
+</div>
 </div>
 </div>
 
@@ -2074,19 +2687,37 @@ onclick="openProduct(
 <h3>Road Traffic Cone</h3>
 <div class="price">KSh 2,070</div>
 
+<div class="product-actions">
+
+<button class="cart-btn"
+onclick="event.stopPropagation();
+openOrderModal(
+'Road Traffic Cone',
+'Standard Unit',
+'2070'
+)">
+<i class='bx bx-cart' style="color:#ff6b00; font-size:20px;"></i>
+</button>
+
 <button class="order-btn"
-onclick="event.stopPropagation();orderNow('Road Traffic Cone','2070')">
-Order Now
+onclick="event.stopPropagation();
+openOrderModal(
+'Road Traffic Cone',
+'Standard Unit',
+'2070'
+)">
+order
 </button>
 
 </div>
 </div>
+</div>
 
-<!-- SLIMLINE INTERLOCKABLE BARRIER -->
+<!-- SLIMLINE BARRIER -->
 <div class="product-card"
 onclick="openProduct(
 'Slimline Interlockable Road Barrier',
-'Interlockable plastic road safety barrier system',
+'Interlockable plastic barrier system',
 'KES 9,270',
 'https://www.toptank.com/wp-content/uploads/2021/05/LACBARRIER04_Red_2-500x500.jpg'
 )">
@@ -2094,19 +2725,39 @@ onclick="openProduct(
 <img src="https://www.toptank.com/wp-content/uploads/2021/05/LACBARRIER04_Red_2-500x500.jpg">
 
 <div class="product-info">
-<h3>Slimline Interlockable Road Barrier</h3>
+<h3>Slimline Interlockable Barrier</h3>
 <div class="price">KSh 9,270</div>
 
-<button class="order-btn"
-onclick="event.stopPropagation();orderNow('Slimline Interlockable Road Barrier','9270')">
-Order Now
+<div class="product-actions">
+
+<button class="cart-btn"
+onclick="event.stopPropagation();
+openOrderModal(
+'Slimline Interlockable Road Barrier',
+'Standard Unit',
+'9270'
+)">
+<i class='bx bx-cart' style="color:#ff6b00; font-size:20px;"></i>
 </button>
 
+<button class="order-btn"
+onclick="event.stopPropagation();
+openOrderModal(
+'Slimline Interlockable Road Barrier',
+'Standard Unit',
+'9270'
+)">
+order
+</button>
+
+</div>
 </div>
 </div>
 
 </div>
 </section>
+
+
 <!-- SANITATION SECTION -->
 
 <section class="category-section" id="sanitation">
@@ -2114,8 +2765,6 @@ Order Now
 <h2 class="category-title">Sanitation</h2>
 
 <div class="product-grid">
-
-
 
 <!-- 115CM MANHOLE -->
 <div class="product-card"
@@ -2132,10 +2781,29 @@ onclick="openProduct(
 <h3>115cm PE Manhole</h3>
 <div class="price">KSh 20,700</div>
 
-<button class="order-btn"
-onclick="event.stopPropagation();orderNow('115cm PE Manhole','20700')">
-Order Now
+<div class="product-actions">
+
+<button class="cart-btn"
+onclick="event.stopPropagation();
+openOrderModal(
+'115cm PE Manhole',
+'115cm Unit',
+'20700'
+)">
+<i class='bx bx-cart' style="color:#ff6b00; font-size:20px;"></i>
 </button>
+
+<button class="order-btn"
+onclick="event.stopPropagation();
+openOrderModal(
+'115cm PE Manhole',
+'115cm Unit',
+'20700'
+)">
+order
+</button>
+
+</div>
 
 </div>
 </div>
@@ -2155,10 +2823,29 @@ onclick="openProduct(
 <h3>140cm PE Manhole</h3>
 <div class="price">KSh 27,900</div>
 
-<button class="order-btn"
-onclick="event.stopPropagation();orderNow('140cm PE Manhole','27900')">
-Order Now
+<div class="product-actions">
+
+<button class="cart-btn"
+onclick="event.stopPropagation();
+openOrderModal(
+'140cm PE Manhole',
+'140cm Unit',
+'27900'
+)">
+<i class='bx bx-cart' style="color:#ff6b00; font-size:20px;"></i>
 </button>
+
+<button class="order-btn"
+onclick="event.stopPropagation();
+openOrderModal(
+'140cm PE Manhole',
+'140cm Unit',
+'27900'
+)">
+order
+</button>
+
+</div>
 
 </div>
 </div>
@@ -2178,10 +2865,29 @@ onclick="openProduct(
 <h3>170cm PE Manhole</h3>
 <div class="price">KSh 31,050</div>
 
-<button class="order-btn"
-onclick="event.stopPropagation();orderNow('170cm PE Manhole','31050')">
-Order Now
+<div class="product-actions">
+
+<button class="cart-btn"
+onclick="event.stopPropagation();
+openOrderModal(
+'170cm PE Manhole',
+'170cm Unit',
+'31050'
+)">
+<i class='bx bx-cart' style="color:#ff6b00; font-size:20px;"></i>
 </button>
+
+<button class="order-btn"
+onclick="event.stopPropagation();
+openOrderModal(
+'170cm PE Manhole',
+'170cm Unit',
+'31050'
+)">
+order
+</button>
+
+</div>
 
 </div>
 </div>
@@ -2201,10 +2907,29 @@ onclick="openProduct(
 <h3>190cm PE Manhole</h3>
 <div class="price">KSh 37,260</div>
 
-<button class="order-btn"
-onclick="event.stopPropagation();orderNow('190cm PE Manhole','37260')">
-Order Now
+<div class="product-actions">
+
+<button class="cart-btn"
+onclick="event.stopPropagation();
+openOrderModal(
+'190cm PE Manhole',
+'190cm Unit',
+'37260'
+)">
+<i class='bx bx-cart' style="color:#ff6b00; font-size:20px;"></i>
 </button>
+
+<button class="order-btn"
+onclick="event.stopPropagation();
+openOrderModal(
+'190cm PE Manhole',
+'190cm Unit',
+'37260'
+)">
+order
+</button>
+
+</div>
 
 </div>
 </div>
@@ -2224,10 +2949,29 @@ onclick="openProduct(
 <h3>Pit Latrine Slab</h3>
 <div class="price">KSh 9,270</div>
 
-<button class="order-btn"
-onclick="event.stopPropagation();orderNow('Pit Latrine Slab','9270')">
-Order Now
+<div class="product-actions">
+
+<button class="cart-btn"
+onclick="event.stopPropagation();
+openOrderModal(
+'Pit Latrine Slab',
+'Standard Unit',
+'9270'
+)">
+<i class='bx bx-cart' style="color:#ff6b00; font-size:20px;"></i>
 </button>
+
+<button class="order-btn"
+onclick="event.stopPropagation();
+openOrderModal(
+'Pit Latrine Slab',
+'Standard Unit',
+'9270'
+)">
+order
+</button>
+
+</div>
 
 </div>
 </div>
@@ -2258,16 +3002,32 @@ onclick="openProduct(
 <h3>1 Tonne Pallet</h3>
 <div class="price">KSh 9,810</div>
 
+<div class="product-actions">
+
+<button class="cart-btn"
+onclick="event.stopPropagation();
+openOrderModal(
+'1 Tonne Pallet',
+'Standard Unit',
+'9810'
+)">
+<i class='bx bx-cart' style="color:#ff6b00; font-size:20px;"></i>
+</button>
+
 <button class="order-btn"
-onclick="event.stopPropagation();orderNow('1 Tonne Pallet','9810')">
-Order Now
+onclick="event.stopPropagation();
+openOrderModal(
+'1 Tonne Pallet',
+'Standard Unit',
+'9810'
+)">
+order
 </button>
 
 </div>
+
 </div>
-
-<!-- 30L COOLER BOX -->
-
+</div>
 
 <!-- 60L COOLER BOX -->
 <div class="product-card"
@@ -2284,10 +3044,29 @@ onclick="openProduct(
 <h3>60L TopKool Cooler Box</h3>
 <div class="price">KSh 9,810</div>
 
-<button class="order-btn"
-onclick="event.stopPropagation();orderNow('60L TopKool Cooler Box','9810')">
-Order Now
+<div class="product-actions">
+
+<button class="cart-btn"
+onclick="event.stopPropagation();
+openOrderModal(
+'60L TopKool Cooler Box',
+'60L Unit',
+'9810'
+)">
+<i class='bx bx-cart' style="color:#ff6b00; font-size:20px;"></i>
 </button>
+
+<button class="order-btn"
+onclick="event.stopPropagation();
+openOrderModal(
+'60L TopKool Cooler Box',
+'60L Unit',
+'9810'
+)">
+order
+</button>
+
+</div>
 
 </div>
 </div>
@@ -2307,16 +3086,32 @@ onclick="openProduct(
 <h3>80L TopKool Cooler Box</h3>
 <div class="price">KSh 14,940</div>
 
+<div class="product-actions">
+
+<button class="cart-btn"
+onclick="event.stopPropagation();
+openOrderModal(
+'80L TopKool Cooler Box',
+'80L Unit',
+'14940'
+)">
+<i class='bx bx-cart' style="color:#ff6b00; font-size:20px;"></i>
+</button>
+
 <button class="order-btn"
-onclick="event.stopPropagation();orderNow('80L TopKool Cooler Box','14940')">
-Order Now
+onclick="event.stopPropagation();
+openOrderModal(
+'80L TopKool Cooler Box',
+'80L Unit',
+'14940'
+)">
+order
 </button>
 
 </div>
+
 </div>
-
-<!-- HALF TONNE PALLET -->
-
+</div>
 
 <!-- TOPDESK LARGE -->
 <div class="product-card"
@@ -2333,10 +3128,29 @@ onclick="openProduct(
 <h3>TopDesk School Chair (Large)</h3>
 <div class="price">KSh 8,010</div>
 
-<button class="order-btn"
-onclick="event.stopPropagation();orderNow('TopDesk Chair Large','8010')">
-Order Now
+<div class="product-actions">
+
+<button class="cart-btn"
+onclick="event.stopPropagation();
+openOrderModal(
+'TopDesk Chair Large',
+'Large Unit',
+'8010'
+)">
+<i class='bx bx-cart' style="color:#ff6b00; font-size:20px;"></i>
 </button>
+
+<button class="order-btn"
+onclick="event.stopPropagation();
+openOrderModal(
+'TopDesk Chair Large',
+'Large Unit',
+'8010'
+)">
+order
+</button>
+
+</div>
 
 </div>
 </div>
@@ -2356,17 +3170,35 @@ onclick="openProduct(
 <h3>TopDesk School Chair (Medium)</h3>
 <div class="price">KSh 6,750</div>
 
-<button class="order-btn"
-onclick="event.stopPropagation();orderNow('TopDesk Chair Medium','6750')">
-Order Now
+<div class="product-actions">
+
+<button class="cart-btn"
+onclick="event.stopPropagation();
+openOrderModal(
+'TopDesk Chair Medium',
+'Medium Unit',
+'6750'
+)">
+<i class='bx bx-cart' style="color:#ff6b00; font-size:20px;"></i>
 </button>
+
+<button class="order-btn"
+onclick="event.stopPropagation();
+openOrderModal(
+'TopDesk Chair Medium',
+'Medium Unit',
+'6750'
+)">
+order
+</button>
+
+</div>
 
 </div>
 </div>
 
 </div>
 </section>
-
 
 </div>
 <!-- END PRODUCTS CONTAINER --><!-- PRODUCT MODAL -->
@@ -2387,7 +3219,7 @@ Order Now
 
 <button class="order-btn"
 onclick="orderCurrentProduct()">
-Order Now
+order
 </button>
 
 </div>
@@ -2411,7 +3243,7 @@ Order Now
       <div class="step-card">
         <div class="step-number">1</div>
         <h3>Browse & Select</h3>
-        <p>Choose your tank size and click "Order Now" on any product.</p>
+        <p>Choose your tank size and click "order" on any product.</p>
       </div>
 
       <div class="step-card">
@@ -3486,6 +4318,91 @@ updateTime();
 setInterval(updateTime, 60000);
 </script>
 
+
+<script>
+
+let orderProduct = "";
+let orderCapacity = "";
+let orderPrice = "";
+let quantity = 1;
+
+const WHATSAPP_NUMBER = "254736066663";
+
+/* OPEN MODAL */
+function openOrderModal(product, capacity, price) {
+
+    orderProduct = product;
+    orderCapacity = capacity;
+    orderPrice = price;
+
+    document.getElementById("summaryProduct").innerText = product;
+    document.getElementById("summaryCapacity").innerText = capacity;
+    document.getElementById("summaryPrice").innerText = "KSh " + price;
+
+    quantity = 1;
+    document.getElementById("qtyDisplay").innerText = quantity;
+
+    document.getElementById("orderModal").style.display = "flex";
+}
+
+/* CLOSE MODAL */
+function closeOrderModal() {
+    document.getElementById("orderModal").style.display = "none";
+}
+
+/* QUANTITY CONTROL */
+function changeQty(change) {
+    quantity += change;
+    if (quantity < 1) quantity = 1;
+    document.getElementById("qtyDisplay").innerText = quantity;
+}
+
+/* =========================
+   WHATSAPP ORDER SUBMISSION
+========================= */
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    document.getElementById("orderForm").addEventListener("submit", function (e) {
+        e.preventDefault();
+
+        const name = document.getElementById("customerName").value.trim();
+        const phone = document.getElementById("customerPhone").value.trim();
+        const location = document.getElementById("customerLocation").value.trim();
+        const notes = document.getElementById("customerNotes").value.trim();
+
+        const cleanPrice = parseInt(orderPrice.toString().replace(/,/g, ""));
+        const total = quantity * cleanPrice;
+
+        const message =
+`🛒 *New Order – TopTank Kenya*
+
+*Product:* ${orderProduct}
+*Capacity:* ${orderCapacity}
+*Quantity:* ${quantity}
+*Total:* KSh ${total.toLocaleString()}
+
+*Customer Details*
+*Name:* ${name}
+*Phone:* ${phone}
+*Delivery Location:* ${location}
+*Notes:* ${notes || "None"}
+
+_Order placed via TopTank Kenya website_`;
+
+        const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
+
+        window.open(url, "_blank");
+
+        closeOrderModal();
+
+        document.getElementById("orderForm").reset();
+        document.getElementById("qtyDisplay").innerText = "1";
+    });
+
+});
+
+</script>
 <!-- CALL BUTTON -->
 <a href="tel:+254736066663" class="call-btn">
     <i class='bx bxs-phone'></i>
@@ -3495,5 +4412,84 @@ setInterval(updateTime, 60000);
 <a href="https://wa.me/254736066663" target="_blank" class="whatsapp-btn">
     <i class='bx bxl-whatsapp'></i>
 </a>
+
+<div id="orderModal" class="order-modal" style="display:none;">
+
+    <div class="order-box">
+
+        <!-- HEADER -->
+        <div class="modal-header">
+            <h3>PLACE YOUR ORDER</h3>
+
+            <button type="button" class="close-btn" onclick="closeOrderModal()">
+                ✕
+            </button>
+        </div>
+
+        <!-- SUMMARY -->
+        <div class="order-summary">
+
+            <h4>ORDER SUMMARY</h4>
+
+            <div class="summary-row">
+                <span>Product</span>
+                <strong id="summaryProduct"></strong>
+            </div>
+
+            <div class="summary-row">
+                <span>Capacity</span>
+                <strong id="summaryCapacity"></strong>
+            </div>
+
+            <div class="summary-row">
+                <span>Unit Price</span>
+                <strong id="summaryPrice"></strong>
+            </div>
+
+            <div class="summary-row">
+                <span>Delivery</span>
+                <strong class="free">FREE</strong>
+            </div>
+
+        </div>
+
+        <!-- FORM -->
+        <form id="orderForm">
+
+            <!-- QUANTITY -->
+            <div class="quantity-box">
+                <label>Quantity</label>
+
+                <div class="qty-controls">
+                    <button type="button" onclick="changeQty(-1)">−</button>
+                    <span id="qtyDisplay">1</span>
+                    <button type="button" onclick="changeQty(1)">+</button>
+                </div>
+            </div>
+
+            <!-- INPUTS -->
+            <input type="text" id="customerName" placeholder="Full Name" required>
+            <input type="tel" id="customerPhone" placeholder="+254 7XX XXX XXX" required>
+            <input type="text" id="customerLocation" placeholder="Delivery Location" required>
+            <textarea id="customerNotes" placeholder="Additional Notes"></textarea>
+
+            <!-- BUTTON GROUP (IMPORTANT IMPROVEMENT) -->
+            <div class="button-group">
+
+                <button type="submit" class="confirm-btn">
+                    CONFIRM ORDER
+                </button>
+
+                <button type="button" class="cancel-btn" onclick="closeOrderModal()">
+                    CANCEL
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
 </body>
 </html>
