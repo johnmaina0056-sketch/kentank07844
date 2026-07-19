@@ -1,0 +1,4605 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=AW-18261430468"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'AW-18261430468');
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>KenTank</title>
+
+<link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial,sans-serif;
+}
+
+body{
+    overflow-x:hidden;
+    padding: 2%;
+}
+
+.qty-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:20px;
+}
+
+#qtyAmount{
+    font-size:20px;
+    font-weight:700;
+    color:#000;
+}
+/* =========================
+OVERLAY (HIDDEN BY DEFAULT FIX)
+========================= */
+.order-modal {
+    display: none; /* 👈 IMPORTANT: hidden on load */
+    position: fixed;
+    inset: 0;
+
+    background: rgba(0,0,0,0.6);
+
+    justify-content: center;
+    align-items: center;
+
+    z-index: 9999;
+}
+
+/* =========================
+SMALL MODAL BOX
+========================= */
+.order-box {
+    width: 100%;
+    max-width: 420px;
+    max-height: 90vh;
+
+    overflow-y: auto;
+
+    background: #fff;
+    border-radius: 14px;
+
+    padding: 16px;
+
+    box-shadow: 0 10px 35px rgba(0,0,0,0.3);
+
+    animation: pop 0.2s ease-in-out;
+}
+
+/* animation */
+@keyframes pop {
+    from {
+        transform: scale(0.85);
+        opacity: 0;
+    }
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/* =========================
+HEADER
+========================= */
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    margin-bottom: 10px;
+}
+
+.modal-header h3 {
+    font-size: 16px;
+    font-weight: 700;
+}
+
+/* FIX: your HTML uses inline button, so support it */
+.modal-header button {
+    border: none;
+    background: transparent;
+    font-size: 22px;
+    cursor: pointer;
+}
+
+/* =========================
+SUMMARY BOX
+========================= */
+.order-summary {
+    background: #f8f8f8;
+    padding: 10px;
+    border-radius: 10px;
+
+    margin-bottom: 12px;
+}
+
+.order-summary h4 {
+    font-size: 13px;
+    margin-bottom: 8px;
+}
+
+.summary-row {
+    display: flex;
+    justify-content: space-between;
+
+    font-size: 13px;
+    margin-bottom: 6px;
+}
+
+/* =========================
+QUANTITY
+========================= */
+.quantity-box {
+    margin-bottom: 12px;
+}
+
+.qty-controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    margin-top: 5px;
+}
+
+.qty-controls button {
+    width: 32px;
+    height: 32px;
+
+    border: none;
+    background: #eee;
+
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+/* =========================
+INPUTS
+========================= */
+.order-box input,
+.order-box textarea {
+    width: 100%;
+    padding: 10px;
+
+    margin-bottom: 10px;
+
+    border: 1px solid #ddd;
+    border-radius: 8px;
+
+    font-size: 14px;
+}
+
+.order-box textarea {
+    resize: none;
+    height: 70px;
+}
+
+/* =========================
+BUTTONS (FIX: SAME LINE CART + ORDER STYLE READY)
+========================= */
+.confirm-btn {
+    width: 100%;
+    padding: 12px;
+
+    background: #ff6b00;
+    color: #fff;
+
+    border: none;
+    border-radius: 8px;
+
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.confirm-btn:hover {
+    background: #e65c00;
+}
+
+.cancel-btn {
+    width: 100%;
+    padding: 10px;
+
+    margin-top: 8px;
+
+    background: #eee;
+    border: none;
+
+    border-radius: 8px;
+
+    cursor: pointer;
+}
+
+/* =========================
+MOBILE FIX
+========================= */
+@media(max-width:768px){
+    .order-box{
+        max-height: 90vh;
+        overflow-y: auto;
+        margin: 10px;
+    }
+}
+/* ======================
+TOP BAR
+====================== */
+
+.topbar{
+    background:#071b33;
+    color:#fff;
+    height:28px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:0 15px;
+    font-size:10px;
+    white-space:nowrap;
+}
+
+.topbar i{
+    color:#f4b000;
+    margin-right:4px;
+}
+
+.top-left,
+.top-right{
+    display:flex;
+    gap:12px;
+}
+
+
+.categories{
+padding:20px;
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(170px,1fr));
+gap:15px;
+}
+.category-grid{
+    display:grid;
+    grid-template-columns:repeat(5,1fr);
+    gap:18px;
+    padding:40px 10%;
+}
+
+.cat-card{
+    background:#fff7e8; /* light warm background like image */
+    border:1px solid #eee;
+    border-radius:10px;
+    text-align:center;
+    padding:25px 15px;
+    transition:.3s ease;
+    cursor:pointer;
+}
+
+.cat-card i{
+    font-size:42px;
+    color:#d98a00; /* MAIN ORANGE COLOR */
+    margin-bottom:12px;
+}
+
+.cat-card p{
+    font-size:13px;
+    font-weight:700;
+    color:#111;
+    letter-spacing:0.5px;
+}
+
+.cat-card:hover{
+    transform:translateY(-5px);
+    box-shadow:0 10px 20px rgba(0,0,0,0.08);
+}
+
+/* responsive */
+@media(max-width:900px){
+    .category-grid{
+        grid-template-columns:repeat(2,1fr);
+    }
+}
+
+@media(max-width:500px){
+    .category-grid{
+        grid-template-columns:1fr;
+    }
+}
+.card{
+background:white;
+padding:25px;
+text-align:center;
+border-radius:10px;
+cursor:pointer;
+transition:.3s;
+box-shadow:0 2px 8px rgba(0,0,0,.08);
+}
+
+.card:hover{
+transform:translateY(-5px);
+}
+
+.card i{
+font-size:60px;
+color:#2144a0;
+margin-bottom:15px;
+}
+
+.card h3{
+color:#2144a0;
+}
+
+.products-container{
+padding:20px;
+display:none;
+}
+
+/* =========================
+PRODUCT ACTION BUTTON ROW
+========================= */
+
+.product-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+/* =========================
+CART BUTTON (ICON STYLE)
+========================= */
+
+.cart-btn {
+  width: 42px;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: none;
+  border-radius: 8px;
+  background: #fff3e6;
+  cursor: pointer;
+
+  transition: 0.3s ease;
+}
+
+.cart-btn i {
+  color: #ff6b00;
+  font-size: 20px;
+}
+
+/* hover effect */
+.cart-btn:hover {
+  background: #ff6b00;
+}
+
+.cart-btn:hover i {
+  color: #fff;
+}
+
+/* =========================
+ORDER BUTTON (FULL BUTTON)
+========================= */
+
+.order-btn {
+  flex: 1; /* makes it take remaining space */
+  height: 42px;
+
+  border: none;
+  border-radius: 8px;
+
+  background: #ff6b00;
+  color: #fff;
+
+  font-weight: 600;
+  cursor: pointer;
+
+  transition: 0.3s ease;
+}
+
+/* hover */
+.order-btn:hover {
+  background: #e65c00;
+}
+
+/* =========================
+MOBILE RESPONSIVE FIX
+========================= */
+
+@media (max-width: 480px) {
+  .product-actions {
+    gap: 8px;
+  }
+
+  .cart-btn {
+    width: 40px;
+    height: 40px;
+  }
+
+  .order-btn {
+    font-size: 14px;
+  }
+}
+.category-section{
+display:none;
+}
+
+.category-title{
+font-size:30px;
+margin-bottom:20px;
+color:#2144a0;
+}
+
+.product-grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:25px;
+}
+@media (max-width:768px){
+
+.product-grid{
+    grid-template-columns:repeat(2,1fr);
+    gap:12px;
+}
+
+.product-card{
+    width:100%;
+}
+
+.product-card img{
+    height:140px;
+    object-fit:cover;
+}
+
+.product-info h3{
+    font-size:14px;
+    line-height:1.4;
+}
+
+.price{
+    font-size:15px;
+}
+
+}
+.product-card{
+    background:#fff;
+    border-radius:18px;
+    overflow:hidden;
+    box-shadow:0 5px 25px rgba(0,0,0,.08);
+    transition:.3s;
+}
+
+.product-card:hover{
+    transform:translateY(-5px);
+}
+
+.product-card img{
+    width:100%;
+    height:250px;
+    object-fit:cover;
+}
+
+.product-info{
+    padding:18px;
+}
+
+.product-info h3{
+    margin-bottom:10px;
+}
+
+.price{
+    font-size:22px;
+    font-weight:700;
+    color:#ffb300;
+}
+
+.product-card{
+background:white;
+border-radius:10px;
+overflow:hidden;
+cursor:pointer;
+transition:.3s;
+box-shadow:0 2px 10px rgba(0,0,0,.1);
+}
+
+.product-card:hover{
+transform:translateY(-5px);
+}
+
+.product-card img{
+width:100%;
+height:200px;
+object-fit:cover;
+}
+
+.product-info{
+padding:15px;
+}
+.payments {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-family: Arial, sans-serif;
+}
+
+.payment-icon {
+  font-size: 28px;
+  color: #333;
+  transition: 0.3s;
+  cursor: pointer;
+}
+
+.payment-icon:hover {
+  transform: scale(1.2);
+  color: #007bff;
+}
+.product-info h3{
+margin-bottom:10px;
+}
+
+.product-info p{
+color:#666;
+font-size:14px;
+margin-bottom:10px;
+}
+
+.price{
+font-size:20px;
+font-weight:bold;
+color:#2144a0;
+margin-bottom:15px;
+}
+
+.order-btn {
+    width: auto;          /* 👈 removes full width */
+    padding: 3px;    /* smaller padding */
+    border: none;
+    background: #2144a0;
+    color: white;
+    cursor: pointer;
+    font-weight: bold;
+
+    border-radius: 6px;   /* nicer look */
+    font-size: 13px;
+
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+
+.order-btn:hover{
+background:#18337a;
+}
+
+.whatsapp{
+position:fixed;
+right:20px;
+bottom:90px;
+width:65px;
+height:65px;
+background:#25D366;
+border-radius:50%;
+display:flex;
+justify-content:center;
+align-items:center;
+font-size:38px;
+color:white;
+text-decoration:none;
+z-index:100;
+}
+
+.bottom-nav{
+position:fixed;
+bottom:0;
+left:0;
+width:100%;
+height:70px;
+background:#2144a0;
+display:flex;
+justify-content:space-around;
+align-items:center;
+}
+
+.bottom-nav a{
+text-decoration:none;
+color:white;
+display:flex;
+flex-direction:column;
+align-items:center;
+font-size:14px;
+}
+
+.bottom-nav .active{
+color:#ffd400;
+}
+
+ /* =========================
+   BACKDROP (DIM BACKGROUND)
+========================= */
+.modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+
+  width: 100%;
+  height: 100%;
+
+  background: rgba(0,0,0,0.6);
+
+  justify-content: center;
+  align-items: center;
+
+  z-index: 9999;
+}
+
+/* =========================
+   SMALL CENTERED FORM BOX
+========================= */
+.modal-content {
+  width: 100%;
+  max-width: 420px;   /* 👈 THIS MAKES IT SMALL */
+  background: #fff;
+
+  border-radius: 12px;
+  padding: 18px;
+
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+
+  animation: pop 0.25s ease-in-out;
+}
+
+/* animation */
+@keyframes pop {
+  from {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* =========================
+   FORM ELEMENTS CLEANUP
+========================= */
+.modal-content input,
+.modal-content select,
+.modal-content textarea {
+  width: 100%;
+  padding: 10px;
+
+  margin-top: 8px;
+  margin-bottom: 12px;
+
+  border: 1px solid #ddd;
+  border-radius: 8px;
+
+  font-size: 14px;
+}
+
+/* =========================
+   BUTTON INSIDE FORM
+========================= */
+.modal-content button {
+  width: 100%;
+  padding: 12px;
+
+  background: #ff6b00;
+  color: white;
+
+  border: none;
+  border-radius: 8px;
+
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.modal-content button:hover {
+  background: #e65c00;
+}
+
+.close{
+float:right;
+font-size:28px;
+cursor:pointer;
+}
+
+@media(max-width:1568px){
+
+.hero{
+justify-content:center;
+}
+
+.hero-text h1{
+font-size:50px;
+}
+
+.hero-text p{
+font-size:20px;
+}
+
+.hero-image {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 25px;
+  overflow: hidden;
+}
+
+.water-tank-section{
+  font-family: Arial, sans-serif;
+}
+
+/* HERO */
+.tank-hero{
+  text-align:center;
+  padding:60px 20px;
+}
+
+.btn-yellow{
+  background:#f7c600;
+  padding:12px 25px;
+  color:#000;
+  text-decoration:none;
+  font-weight:bold;
+  display:inline-block;
+  margin-top:15px;
+}
+
+/* FEATURES STRIP */
+.features-strip{
+  background:#ffe600;
+  display:flex;
+  justify-content:space-around;
+  padding:30px 10px;
+  flex-wrap:wrap;
+}
+
+.feature{
+  width:180px;
+  text-align:center;
+  margin:10px;
+}
+
+/* MAIN GRID */
+.main-grid{
+  display:flex;
+  justify-content:space-between;
+  padding:60px 10%;
+  gap:40px;
+  flex-wrap:wrap;
+}
+
+.why-choose ul{
+  list-style:none;
+  padding:0;
+}
+
+.why-choose li{
+  padding:6px 0;
+}
+
+/* BUY SECTION */
+.buy-online{
+  max-width:500px;
+}
+
+.payments img{
+  width:50px;
+  margin:5px;
+}
+
+.product-img{
+  width:100%;
+  margin-top:20px;
+}
+
+/* FOOTER */
+.tank-footer{
+  margin: -2%;
+  background:#0b2a5b;
+  color:white;
+  display:flex;
+  justify-content:space-around;
+  padding:40px 10px;
+  padding-bottom: 70px;
+  flex-wrap:wrap;
+}
+
+.footer-col{
+  width:200px;
+  margin:10px;
+}
+
+.footer-col a{
+  display:block;
+  color:white;
+  text-decoration:none;
+  margin:5px 0;
+}
+/* ==================================
+   WHY KenTank SECTION
+================================== */
+
+.why-KenTank{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    align-items:center;
+    gap:min(6vw,80px);
+    padding:clamp(50px,8vw,120px) 5%;
+    background:#f7f7f7;
+}
+
+/* ==================================
+   LEFT SIDE
+================================== */
+
+.tank-side{
+    position:relative;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+
+.tank-circle{
+    width:min(90vw,560px);
+    aspect-ratio:1;
+    border-radius:50%;
+    background:
+    radial-gradient(circle at center,
+    #f8e7b4 0%,
+    #f2d274 65%,
+    #edc248 100%);
+    position:relative;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+
+.tank-outline{
+    position:absolute;
+    width:78%;
+    height:78%;
+    border-radius:50%;
+    border:2px dashed rgba(214,158,0,.35);
+}
+
+/* Tank */
+
+.tank-illustration{
+    position:relative;
+    transform:scale(clamp(.65,1vw + .7,.95));
+}
+
+.tank-body{
+    width:180px;
+    height:200px;
+    background:#2d3942;
+    border-radius:50% 50% 35% 35%;
+}
+
+.tank-lid{
+    width:180px;
+    height:42px;
+    border-radius:50%;
+    background:#394754;
+    position:absolute;
+    top:-20px;
+}
+
+.tank-lid::after{
+    content:"";
+    width:110px;
+    height:28px;
+    background:#b8871d;
+    border-radius:50%;
+    position:absolute;
+    left:50%;
+    top:7px;
+    transform:translateX(-50%);
+}
+
+.tank-neck{
+    width:28px;
+    height:55px;
+    background:#394754;
+    position:absolute;
+    left:50%;
+    transform:translateX(-50%);
+    top:-65px;
+    border-radius:10px;
+}
+
+.tank-neck::before{
+    content:"";
+    width:28px;
+    height:28px;
+    background:#f1b122;
+    border-radius:50%;
+    position:absolute;
+    top:-14px;
+}
+
+
+.tank-base{
+    width:70px;
+    height:18px;
+    border-radius:20px;
+    background:#495762;
+    position:absolute;
+    left:50%;
+    transform:translateX(-50%);
+    bottom:10px;
+}
+
+/* ==================================
+   FLOATING CARDS
+================================== */
+
+.floating-card{
+    position:absolute;
+    background:#fff;
+    border-radius:18px;
+    padding:16px 18px;
+    box-shadow:0 15px 40px rgba(0,0,0,.08);
+    display:flex;
+    align-items:center;
+    gap:12px;
+    z-index:5;
+}
+
+.warranty{
+    left:-20px;
+    top:12%;
+}
+
+.cert{
+    right:-20px;
+    bottom:12%;
+}
+
+.icon{
+    font-size:22px;
+    color:#d89a00;
+}
+
+.floating-card h4{
+    margin:0;
+    font-size:14px;
+    font-weight:800;
+}
+
+.floating-card p{
+    margin:3px 0 0;
+    font-size:12px;
+    color:#888;
+}
+
+/* ==================================
+   RIGHT SIDE
+================================== */
+
+.content-side{
+    max-width:650px;
+}
+
+.section-tag{
+    display:inline-block;
+    border:1px solid #e0b04b;
+    border-radius:999px;
+    padding:10px 18px;
+    font-size:11px;
+    font-weight:700;
+    letter-spacing:1px;
+    color:#d89a00;
+}
+
+.content-side h2{
+    font-size:clamp(2rem,5vw,4rem);
+    line-height:1;
+    margin:25px 0 20px;
+    font-weight:900;
+    color:#091321;
+}
+
+.content-side h2 span{
+    color:#e0a000;
+}
+
+.intro{
+    color:#6f7782;
+    line-height:1.8;
+    margin-bottom:40px;
+}
+
+.feature{
+    display:flex;
+    align-items:flex-start;
+    gap:16px;
+    margin-bottom:28px;
+}
+
+
+
+.check{
+    flex-shrink:0;
+    width:42px;
+    height:42px;
+    border-radius:50%;
+    background:#e0a000;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    font-weight:700;
+}
+
+.feature h4{
+    margin:0 0 5px;
+    font-size:15px;
+    font-weight:800;
+}
+
+.feature p{
+    margin:0;
+    color:#7f8791;
+    line-height:1.7;
+    font-size:14px;
+}
+
+/* ==================================
+   BUTTONS
+================================== */
+
+.button-group{
+    display:flex;
+    gap:16px;
+    flex-wrap:wrap;
+    margin-top:40px;
+}
+
+.btn-primary,
+.btn-outline{
+    padding:16px 34px;
+    border-radius:12px;
+    text-decoration:none;
+    font-weight:700;
+    transition:.3s;
+}
+
+.btn-primary{
+    background:#e0a000;
+    color:#111;
+}
+
+.btn-outline{
+    border:2px solid #e0a000;
+    color:#e0a000;
+}
+
+/* ==================================
+   TABLET
+================================== */
+
+@media (max-width:992px){
+
+    .why-KenTank{
+        grid-template-columns:1fr;
+    }
+
+    .content-side{
+        max-width:none;
+    }
+
+    .tank-side{
+        order:1;
+    }
+
+    .content-side{
+        order:2;
+        text-align:center;
+    }
+
+    .feature{
+        text-align:left;
+    }
+
+    .button-group{
+        justify-content:center;
+    }
+}
+
+
+/* ==================================
+   MOBILE
+================================== */
+
+@media (max-width:600px){
+
+    .tank-circle{
+        width:min(95vw,340px);
+    }
+
+    .floating-card{
+        position:static;
+        margin:12px auto;
+        width:max-content;
+    }
+
+    .tank-side{
+        flex-direction:column;
+        gap:12px;
+    }
+
+    .feature{
+        gap:12px;
+    }
+
+    .button-group{
+        flex-direction:column;
+    }
+
+    .btn-primary,
+    .btn-outline{
+        width:100%;
+        text-align:center;
+    }
+}
+.price-section{
+    padding:100px 20px;
+    background:#f5f5f5;
+    text-align:center;
+}
+
+.price-tag{
+    display:inline-block;
+    padding:8px 18px;
+    border:1px solid #f0b000;
+    border-radius:30px;
+    color:#f0b000;
+    font-size:11px;
+    font-weight:700;
+    margin-bottom:15px;
+}
+
+.price-header h2{
+    font-size:42px;
+    font-weight:900;
+    color:#071524;
+    margin-bottom:10px;
+}
+
+.price-header p{
+    color:#8d95a0;
+    font-size:14px;
+    margin-bottom:40px;
+}
+
+.price-table-wrapper{
+    max-width:900px;
+    margin:auto;
+    overflow-x:auto;
+}
+
+.price-table{
+    width:100%;
+    border-collapse:collapse;
+    overflow:hidden;
+    border-radius:12px;
+    box-shadow:0 15px 40px rgba(0,0,0,.08);
+}
+
+.price-table thead{
+    background:#f0ad00;
+}
+
+.price-table th{
+    padding:18px;
+    text-align:left;
+    color:#111;
+    font-size:13px;
+    font-weight:800;
+}
+
+.price-table tbody{
+    background:#081b2d;
+}
+
+.price-table td{
+    padding:18px;
+    color:white;
+    border-bottom:1px solid rgba(255,255,255,.08);
+    font-size:14px;
+}
+
+.price-table tbody tr:hover{
+    background:#0d243b;
+}
+
+.price-table button{
+    border:none;
+    background:#f0ad00;
+    color:#111;
+    padding:8px 16px;
+    border-radius:6px;
+    font-weight:700;
+    cursor:pointer;
+}
+
+.price-table button:hover{
+    transform:translateY(-2px);
+}
+
+
+/* small phones */
+@media(max-width:480px){
+    .call-btn,
+    .whatsapp-btn{
+        width:52px;
+        height:52px;
+        right:15px;
+    }
+
+    .call-btn{
+        bottom:90px;
+    }
+
+    .whatsapp-btn{
+        bottom:25px;
+    }
+}
+    @media(max-width:768px){
+
+    .price-header h2{
+        font-size:28px;
+    }
+
+    .price-table th,
+    .price-table td{
+        padding:12px;
+        font-size:12px;
+    }
+
+    .call-btn,
+    .whatsapp-btn{
+        width:100%;
+        max-width:320px;
+        text-align:center;
+    }
+}
+    /* Floating buttons */
+.call-btn,
+.whatsapp-btn,
+.whatsapp{
+    width:60px;
+    height:60px;
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+
+/* ======================
+HEADER
+====================== */
+
+header{
+    height:60px;
+    background:#fff;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:0 20px;
+    border-bottom:2px solid #f4b000;
+}
+
+.logo{
+    display:flex;
+    align-items:center;
+    gap:8px;
+}
+
+.logo-box{
+    width:35px;
+    height:35px;
+    background:#f4b000;
+    border-radius:6px;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+
+.logo-box i{
+    font-size:20px;
+    color:#071b33;
+}
+
+.logo h2{
+    font-size:22px;
+    color:#071b33;
+}
+
+.logo span{
+    color:#f4b000;
+}
+
+nav{
+    display:flex;
+    gap:25px;
+}
+
+nav a{
+    text-decoration:none;
+    color:#222;
+    font-size:11px;
+    font-weight:700;
+}
+
+nav a:hover{
+    color:#f4b000;
+}
+
+.actions{
+    display:flex;
+    align-items:center;
+    gap:10px;
+}
+
+.shop-btn{
+    background:#f4b000;
+    color:#000;
+    text-decoration:none;
+    padding:10px 18px;
+    border-radius:6px;
+    font-size:11px;
+    font-weight:700;
+}
+
+.cart{
+    width:40px;
+    height:40px;
+    border:2px solid #f4b000;
+    border-radius:6px;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    position:relative;
+}
+
+.cart span{
+    position:absolute;
+    top:-6px;
+    right:-6px;
+    width:16px;
+    height:16px;
+    border-radius:50%;
+    background:red;
+    color:#fff;
+    font-size:8px;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+
+/* ======================
+MENU ICON
+====================== */
+
+.menu-btn{
+    display:none;
+    font-size:30px;
+    cursor:pointer;
+}
+
+/* ======================
+SIDEBAR
+====================== */
+
+.mobile-sidebar{
+    position:fixed;
+    top:0;
+    left:-280px;
+    width:280px;
+    height:100vh;
+    background:#fff;
+    z-index:9999;
+    transition:.3s;
+    display:flex;
+    flex-direction:column;
+}
+
+.mobile-sidebar.active{
+    left:0;
+}
+
+.sidebar-header{
+    height:74px;
+    background:#071b33;
+    border-bottom:3px solid #f4b000;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:0 15px;
+}
+
+.sidebar-logo{
+    color:#fff;
+    font-size:24px;
+    font-weight:800;
+}
+
+.sidebar-logo span{
+    color:#f4b000;
+}
+
+.close-btn{
+    width:34px;
+    height:34px;
+    border:none;
+    border-radius:50%;
+    background:rgba(255,255,255,.12);
+    color:#fff;
+    font-size:24px;
+    cursor:pointer;
+}
+
+.sidebar-menu{
+    flex:1;
+}
+
+.menu-item{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:18px 15px;
+    border-bottom:1px solid #e5e5e5;
+    text-decoration:none;
+    color:#111;
+    font-size:13px;
+    font-weight:700;
+}
+
+.submenu a{
+    display:block;
+    padding:14px 30px;
+    text-decoration:none;
+    color:#555;
+    border-bottom:1px solid #efefef;
+    font-size:12px;
+}
+
+.sidebar-footer{
+    padding:15px;
+}
+
+.sidebar-shop{
+    display:block;
+    background:#f4b000;
+    color:#000;
+    text-decoration:none;
+    text-align:center;
+    padding:14px;
+    border-radius:8px;
+    font-size:12px;
+    font-weight:700;
+    margin-bottom:12px;
+}
+
+.sidebar-call{
+    display:block;
+    text-decoration:none;
+    text-align:center;
+    padding:14px;
+    border:2px solid #f4b000;
+    border-radius:8px;
+    color:#f4b000;
+    font-size:12px;
+    font-weight:700;
+}
+
+/* ======================
+OVERLAY
+====================== */
+
+.overlay{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.5);
+    opacity:0;
+    visibility:hidden;
+    transition:.3s;
+    z-index:9998;
+}
+
+.overlay.active{
+    opacity:1;
+    visibility:visible;
+}
+
+/* ======================
+MOBILE
+====================== */
+
+@media(max-width:900px){
+
+    nav,
+    .actions{
+        display:none;
+    }
+
+    .menu-btn{
+        display:block;
+    }
+
+    .topbar{
+        font-size:8px;
+        padding:0 8px;
+    }
+
+    .top-left,
+    .top-right{
+        gap:5px;
+    }
+
+}
+.hero{
+    position: relative;
+    min-height: 650px;
+    display: flex;
+    align-items: center;
+    color: #fff;
+    padding: 0 10%;
+    overflow: hidden;
+
+    /* ✅ BACKGROUND IMAGE FIX */
+    background-image: url("bg.png");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+/* ✅ DARK OVERLAY (DO NOT BLOCK IMAGE) */
+.hero::before{
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45); /* adjust darkness here */
+    z-index: 1;
+}
+
+/* ✅ HERO CONTENT ABOVE OVERLAY */
+.hero-content{
+    position: relative;
+    z-index: 2;
+}
+
+/* =========================
+   ARROWS / CONTROLS SAFETY
+========================= */
+.hero .arrow,
+.slider-dots{
+    position: relative;
+    z-index: 3;
+}
+
+/* =========================
+   MOBILE RESPONSIVE FIX
+========================= */
+@media (max-width: 768px){
+
+    .hero{
+        min-height: 500px;
+        padding: 0 6%;
+        background-position: center top; /* better crop for phones */
+    }
+
+    .hero-content h1{
+        font-size: 22px;
+        line-height: 1.3;
+    }
+
+    .hero-content p{
+        font-size: 14px;
+    }
+}
+
+/* content sits above background */
+.hero-content{
+    max-width:550px;
+    position:relative;
+    z-index:1;
+}
+
+.hero small{
+    color:#f5b000;
+    font-weight:700;
+    letter-spacing:1px;
+    position:relative;
+    z-index:1;
+}
+
+.hero h1{
+    font-size:72px;
+    line-height:0.95;
+    margin:15px 0;
+    text-transform:uppercase;
+    position:relative;
+    z-index:1;
+}
+
+.hero h1 span{
+    display:block;
+    color:#f5b000;
+}
+
+.hero p{
+    color:#fff6f6;
+    line-height:1.8;
+    margin-bottom:30px;
+    font-weight: 400;
+    position:relative;
+    z-index:1;
+}
+
+.hero-buttons{
+    display:flex;
+    gap:15px;
+    color: #000;
+    position:relative;
+    z-index:1;
+}
+
+.btn-yellow{
+    background:#f5b000;
+    color:#000;
+    padding:14px 28px;
+    border-radius:8px;
+    text-decoration:none;
+    font-weight:700;
+}
+
+.btn-outline{
+    border:1px solid #fff;
+    color:#fff;
+    padding:14px 28px;
+    border-radius:8px;
+    text-decoration:none;
+    font-weight:700;
+}
+
+/* arrows */
+.arrow{
+    position:absolute;
+    top:50%;
+    transform:translateY(-50%);
+    width:45px;
+    height:45px;
+    border:none;
+    border-radius:50%;
+    background:rgba(255,255,255,.08);
+    color:white;
+    cursor:pointer;
+    font-size:20px;
+    z-index:2;
+}
+
+.left{
+    left:30px;
+}
+
+.right{
+    right:30px;
+}
+
+/* dots */
+.slider-dots{
+    position:absolute;
+    bottom:20px;
+    left:50%;
+    transform:translateX(-50%);
+    z-index:2;
+}
+
+.dot{
+    width:10px;
+    height:10px;
+    border-radius:50%;
+    background:#777;
+    display:inline-block;
+    margin:0 5px;
+    cursor:pointer;
+}
+
+.dot.active{
+    background:#f5b000;
+}
+
+/* responsive */
+@media(max-width:768px){
+
+    .hero{
+        min-height:500px;
+        padding:40px 25px;
+    }
+
+    .hero h1{
+        font-size:42px;
+    }
+
+    .arrow{
+        width:38px;
+        height:38px;
+    }
+}
+
+</style>
+
+</head>
+    <!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=AW-18261430468"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'AW-18261430468');
+</script>
+<body>
+
+<!-- TOP BAR -->
+
+<div class="topbar">
+
+    <div class="top-left">
+        <span><i class='bx bx-phone'></i> +254 784 400 492</span>
+        
+    </div>
+
+    <div class="top-right">
+        <span>
+  <i class='bx bx-time'></i>
+  <span id="live-time"></span>
+</span>
+        <span><i class='bx bx-map'></i> Nairobi, Kenya</span>
+    </div>
+
+</div>
+
+<!-- HEADER -->
+
+<header>
+
+    <div class="logo">
+        <div class="logo-box">
+            <i class='bx bxs-map'></i>
+        </div>
+        <h2>KEN<span>TANK</span></h2>
+    </div>
+
+  <nav>
+    <a href="#categories" onclick="scrollToSection('categories'); return false;">
+        ALL PRODUCTS
+    </a>
+
+    <a href="#" onclick="showCategory('tanks'); return false;">
+        CUSTOM PRODUCTS
+    </a>
+
+    <a href="#why" onclick="scrollToSection('about'); return false;">
+        ABOUT US
+    </a>
+
+    <a href="#contact" onclick="scrollToSection('contact'); return false;">
+        CONTACT US
+    </a>
+</nav>
+
+    <div class="actions">
+
+        <a href="#categories" class="shop-btn">
+            SHOP NOW
+        </a>
+
+        <div class="cart">
+            <i class='bx bx-cart'></i>
+            <span>1</span>
+        </div>
+
+    </div>
+
+    <div class="menu-btn" id="menuBtn">
+        <i class='bx bx-menu'></i>
+    </div>
+
+</header>
+
+<!-- SIDEBAR -->
+
+<div class="mobile-sidebar" id="sidebar">
+
+    <div class="sidebar-header">
+
+        <div class="sidebar-logo">
+            KEN<span>TANK</span>
+        </div>
+
+        <button class="close-btn" id="closeBtn">
+            <i class='bx bx-x'></i>
+        </button>
+
+    </div>
+
+    <div class="sidebar-menu">
+
+     <div class="menu-item" onclick="toggleSubmenu()">
+    ALL PRODUCTS
+    <i class='bx bx-chevron-down'></i>
+</div>
+
+<div class="submenu" id="submenu">
+    <a href="#" onclick="showCategory('tanks')">Water Tanks</a>
+    <a href="#" onclick="showCategory('agriculture')">Agriculture</a>
+    <a href="#" onclick="showCategory('roadsafety')">Road Safety</a>
+    <a href="#" onclick="showCategory('sanitation')">Sanitation</a>
+    <a href="#" onclick="showCategory('miscellaneous')">Miscellaneous</a>
+</div>
+
+<a href="#" class="menu-item" onclick="showCategory('miscellaneous')">CUSTOM PRODUCTS</a>
+<a href="#" class="menu-item" onclick="scrollToSection('about')">ABOUT US</a>
+<a href="#" class="menu-item" onclick="scrollToSection('contact')">CONTACT US</a>
+
+
+    </div>
+
+    <div class="sidebar-footer">
+
+        <a href="#categories" class="sidebar-shop">
+            SHOP NOW
+        </a>
+
+        <a href="tel:+254784400492" class="sidebar-call">
+            CALL US
+        </a>
+
+    </div>
+
+</div>
+
+<div class="overlay" id="overlay"></div>
+
+
+<section class="hero" style="color: #000;" id="hero">
+
+
+
+    
+    <!-- LEFT ARROW -->
+    <button class="arrow left" onclick="prevSlide()">
+        &#10094;
+    </button>
+
+
+    <!-- CONTENT -->
+    <div style="color: #000;" class="hero-content" >
+
+        <small id="heroTag">
+            KENYA'S #1 WATER STORAGE SOLUTION
+        </small>
+
+        <h1 id="heroTitle">
+            KWA MAHITAJI YAKO
+            <span>YOTE YA MAJI</span>
+        </h1>
+
+        <p id="heroText">
+            DOUBLE-layered, UV-protected tanks 100L–24,000L.
+            Food-grade polyethylene. Made in Kenya.
+        </p>
+
+        <div class="hero-buttons">
+            <a href="#categories" class="btn-yellow">SHOP TANKS</a>
+            <a href="#contact" class="btn-outline">GET A QUOTE</a>
+        </div>
+
+    </div>
+
+    <!-- RIGHT ARROW -->
+    <button class="arrow right" onclick="nextSlide()">
+        &#10095;
+    </button>
+
+    <!-- DOTS -->
+    <div class="slider-dots">
+        <span class="dot active" onclick="goToSlide(0)"></span>
+        <span class="dot" onclick="goToSlide(1)"></span>
+        <span class="dot" onclick="goToSlide(2)"></span>
+        <span class="dot" onclick="goToSlide(3)"></span>
+    </div>
+
+</section>
+
+
+<section id="categories" class="categories">
+
+<div class="card" onclick="showCategory('tanks')">
+ <i style="color: #ff6b00;" class='bx bx-water'></i>
+<h3>Tanks</h3>
+</div>
+
+<div class="card" onclick="showCategory('agriculture')">
+ <i style="color: #ff6b00;" class='bx bx-leaf'></i>
+<h3>Agriculture</h3>
+</div>
+
+<div class="card" onclick="showCategory('bins')">
+<i style="color: #ff6b00;" class='bx bx-package'></i>
+<h3>Bins</h3>
+</div>
+
+<div class="card" onclick="showCategory('roadsafety')">
+<i style="color: #ff6b00;" class='bx bx-map-pin'></i>
+<h3>Road Safety</h3>
+</div>
+
+<div class="card" onclick="showCategory('sanitation')">
+ <i style="color: #ff6b00;" class='bx bx-bath'></i>
+<h3>Sanitation</h3>
+</div>
+
+<div class="card" onclick="showCategory('miscellaneous')">
+<i style="color: #ff6b00;" class='bx bx-cube'></i>
+<h3>Miscellaneous</h3>
+</div>
+
+</section>
+
+<!-- ===================== TANKS SECTION ===================== -->
+<section class="category-section" id="tanks">
+
+<h2 class="category-title">Our Products</h2>
+
+<div class="product-grid">
+
+<!-- 1000L -->
+<div class="product-card">
+  <img src="kentank1.jfif" alt="1000L Loft Tank">
+
+  <div class="product-info">
+    <h3>1,000L Rectangular Loft Tank</h3>
+    <div class="price">KSh 4,500</div>
+
+    <div class="product-actions">
+
+      <button class="cart-btn"
+        onclick="event.stopPropagation();openOrderModal('1,000L Rectangular Loft Tank','1,000L','4500')">
+        <i class='bx bx-cart'></i>
+      </button>
+
+      <button class="order-btn"
+        onclick="event.stopPropagation();openOrderModal('1,000L Rectangular Loft Tank','1,000L','4500')">
+        order
+      </button>
+
+    </div>
+  </div>
+</div>
+
+<!-- 1500L -->
+<div class="product-card">
+  <img src="kentank1.jfif" alt="1500L Tank">
+
+  <div class="product-info">
+    <h3>1,500L Standard Cylindrical Tank</h3>
+    <div class="price">KSh 7,500</div>
+
+    <div class="product-actions">
+
+      <button class="cart-btn"
+        onclick="event.stopPropagation();openOrderModal('1,500L Standard Cylindrical Tank','1,500L','7500')">
+        <i class='bx bx-cart'></i>
+      </button>
+
+      <button class="order-btn"
+        onclick="event.stopPropagation();openOrderModal('1,500L Standard Cylindrical Tank','1,500L','7500')">
+        order
+      </button>
+
+    </div>
+  </div>
+</div>
+
+<!-- 2000L -->
+<div class="product-card">
+  <img src="kentank1.jfif" alt="2000L Tank">
+
+  <div class="product-info">
+    <h3>2,000L Deluxe Cylindrical Tank</h3>
+    <div class="price">KSh 10,500</div>
+
+    <div class="product-actions">
+
+      <button class="cart-btn"
+        onclick="event.stopPropagation();openOrderModal('2,000L Deluxe Cylindrical Tank','2,000L','10500')">
+        <i class='bx bx-cart'></i>
+      </button>
+
+      <button class="order-btn"
+        onclick="event.stopPropagation();openOrderModal('2,000L Deluxe Cylindrical Tank','2,000L','10500')">
+        order
+      </button>
+
+    </div>
+  </div>
+</div>
+
+<!-- 3000L -->
+<div class="product-card">
+  <img src="kentank1.jfif">
+
+  <div class="product-info">
+    <h3>3,000L Deluxe Cylindrical Tank</h3>
+    <div class="price">KSh 14,500</div>
+
+    <div class="product-actions">
+      <button class="cart-btn"
+        onclick="event.stopPropagation();openOrderModal('3,000L Deluxe Cylindrical Tank','3,000L','14500')">
+        <i class='bx bx-cart'></i>
+      </button>
+
+      <button class="order-btn"
+        onclick="event.stopPropagation();openOrderModal('3,000L Deluxe Cylindrical Tank','3,000L','14500')">
+        order
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- 3500L -->
+<div class="product-card">
+  <img src="kentank1.jfif">
+
+  <div class="product-info">
+    <h3>3,500L Deluxe Cylindrical Tank</h3>
+    <div class="price">KSh 16,500</div>
+
+    <div class="product-actions">
+      <button class="cart-btn"
+        onclick="event.stopPropagation();openOrderModal('3,500L Deluxe Cylindrical Tank','3,500L','16500')">
+        <i class='bx bx-cart'></i>
+      </button>
+
+      <button class="order-btn"
+        onclick="event.stopPropagation();openOrderModal('3,500L Deluxe Cylindrical Tank','3,500L','16500')">
+        order
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- 4000L -->
+<div class="product-card">
+  <img src="kentank1.jfif">
+
+  <div class="product-info">
+    <h3>4,000L Deluxe Cylindrical Tank</h3>
+    <div class="price">KSh 18,500</div>
+
+    <div class="product-actions">
+      <button class="cart-btn"
+        onclick="event.stopPropagation();openOrderModal('4,000L Deluxe Cylindrical Tank','4,000L','18500')">
+        <i class='bx bx-cart'></i>
+      </button>
+
+      <button class="order-btn"
+        onclick="event.stopPropagation();openOrderModal('4,000L Deluxe Cylindrical Tank','4,000L','18500')">
+        order
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- 5000L -->
+<div class="product-card">
+  <img src="kentank1.jfif">
+
+  <div class="product-info">
+    <h3>5,000L Deluxe Cylindrical Tank</h3>
+    <div class="price">KSh 24,500</div>
+
+    <div class="product-actions">
+      <button class="cart-btn"
+        onclick="event.stopPropagation();openOrderModal('5,000L Deluxe Cylindrical Tank','5,000L','24500')">
+        <i class='bx bx-cart'></i>
+      </button>
+
+      <button class="order-btn"
+        onclick="event.stopPropagation();openOrderModal('5,000L Deluxe Cylindrical Tank','5,000L','24500')">
+        order
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- 6000L -->
+<div class="product-card">
+  <img src="kentank1.jfif">
+
+  <div class="product-info">
+    <h3>6,000L Deluxe Cylindrical Tank</h3>
+    <div class="price">KSh 26,500</div>
+
+    <div class="product-actions">
+      <button class="cart-btn"
+        onclick="event.stopPropagation();openOrderModal('6,000L Deluxe Cylindrical Tank','6,000L','26500')">
+        <i class='bx bx-cart'></i>
+      </button>
+
+      <button class="order-btn"
+        onclick="event.stopPropagation();openOrderModal('6,000L Deluxe Cylindrical Tank','6,000L','26500')">
+        order
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- 8000L -->
+<div class="product-card">
+  <img src="kentank1.jfif">
+
+  <div class="product-info">
+    <h3>8,000L Deluxe Cylindrical Tank</h3>
+    <div class="price">KSh 32,500</div>
+
+    <div class="product-actions">
+      <button class="cart-btn"
+        onclick="event.stopPropagation();openOrderModal('8,000L Deluxe Cylindrical Tank','8,000L','32500')">
+        <i class='bx bx-cart'></i>
+      </button>
+
+      <button class="order-btn"
+        onclick="event.stopPropagation();openOrderModal('8,000L Deluxe Cylindrical Tank','8,000L','32500')">
+        order
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- 10000L -->
+<div class="product-card">
+  <img src="kentank1.jfif">
+
+  <div class="product-info">
+    <h3>10,000L Deluxe Cylindrical Tank</h3>
+    <div class="price">KSh 48,500</div>
+
+    <div class="product-actions">
+      <button class="cart-btn"
+        onclick="event.stopPropagation();openOrderModal('10,000L Deluxe Cylindrical Tank','10,000L','48500')">
+        <i class='bx bx-cart'></i>
+      </button>
+
+      <button class="order-btn"
+        onclick="event.stopPropagation();openOrderModal('10,000L Deluxe Cylindrical Tank','10,000L','48500')">
+        order
+      </button>
+    </div>
+  </div>
+</div>
+
+</div>
+</section>
+
+<!-- AGRICULTURE SECTION -->
+<!-- AGRICULTURE SECTION -->
+<section class="category-section" id="agriculture">
+
+<h2 class="category-title">Agriculture</h2>
+
+<div class="product-grid">
+
+<!-- ROUND PLANTER 1 -->
+<div class="product-card"
+onclick="openProduct(
+'Round Beige Planter 50cm',
+'Modern stone-look round planter',
+'KES 5,040',
+'https://www.toptank.com/wp-content/uploads/2025/03/LACPLNTS09_EarthBrown_2-500x500.jpg'
+)">
+
+<img src="https://www.toptank.com/wp-content/uploads/2025/03/LACPLNTS09_EarthBrown_2-500x500.jpg">
+
+<div class="product-info">
+<h3>Round Beige Planter – 50cm</h3>
+<div class="price">KSh 5,040</div>
+
+<div class="product-actions">
+    <button class="cart-btn"
+        onclick="event.stopPropagation();openOrderModal('Round Beige Planter 50cm','5040')">
+        <i class='bx bx-cart'></i>
+    </button>
+
+    <button class="order-btn"
+        onclick="event.stopPropagation();openOrderModal('Round Beige Planter 50cm','5040')">
+        Order Now
+    </button>
+</div>
+
+</div>
+</div>
+
+<!-- ROUND PLANTER 2 -->
+<div class="product-card"
+onclick="openProduct(
+'Round Beige Planter 50cm',
+'Modern stone-look round planter',
+'KES 5,040',
+'https://www.toptank.com/wp-content/uploads/2025/03/LACPLNTS08_Beige_2--500x500.jpg'
+)">
+
+<img src="https://www.toptank.com/wp-content/uploads/2025/03/LACPLNTS08_Beige_2--500x500.jpg">
+
+<div class="product-info">
+<h3>Round Beige Planter – 50cm</h3>
+<div class="price">KSh 5,040</div>
+
+<div class="product-actions">
+    <button class="cart-btn"
+        onclick="event.stopPropagation();openOrderModal('Round Beige Planter 50cm','5040')">
+        <i class='bx bx-cart'></i>
+    </button>
+
+    <button class="order-btn"
+        onclick="event.stopPropagation();openOrderModal('Round Beige Planter 50cm','5040')">
+        Order Now
+    </button>
+</div>
+
+</div>
+</div>
+
+<!-- RECTANGULAR PLANTER -->
+<div class="product-card"
+onclick="openProduct(
+'Tall Rectangular Planter',
+'75cm tall modern planter',
+'KES 9,180',
+'https://www.toptank.com/wp-content/uploads/2025/03/LACPLNTS10_CharcoalGrey_2-500x500.jpg'
+)">
+
+<img src="https://www.toptank.com/wp-content/uploads/2025/03/LACPLNTS10_CharcoalGrey_2-500x500.jpg">
+
+<div class="product-info">
+<h3>Tall Rectangular Planter – 75cm</h3>
+<div class="price">KSh 9,180</div>
+
+<div class="product-actions">
+    <button class="cart-btn"
+        onclick="event.stopPropagation();openOrderModal('Tall Rectangular Planter','9180')">
+        <i class='bx bx-cart'></i>
+    </button>
+
+    <button class="order-btn"
+        onclick="event.stopPropagation();openOrderModal('Tall Rectangular Planter','9180')">
+        Order Now
+    </button>
+</div>
+
+</div>
+</div>
+
+<!-- LARGE ROUND -->
+<div class="product-card"
+onclick="openProduct(
+'Large Round Planter 76cm',
+'TopPlanter large round design',
+'KES 11,250',
+'https://www.toptank.com/wp-content/uploads/2024/04/LACPLNTS04_CharcoalGrey_6-500x500.jpg'
+)">
+
+<img src="https://www.toptank.com/wp-content/uploads/2024/04/LACPLNTS04_CharcoalGrey_6-500x500.jpg">
+
+<div class="product-info">
+<h3>Large Round Planter – 76cm</h3>
+<div class="price">KSh 11,250</div>
+
+<div class="product-actions">
+    <button class="cart-btn"
+        onclick="event.stopPropagation();openOrderModal('Large Round Planter 76cm','11250')">
+        <i class='bx bx-cart'></i>
+    </button>
+
+    <button class="order-btn"
+        onclick="event.stopPropagation();openOrderModal('Large Round Planter 76cm','11250')">
+        Order Now
+    </button>
+</div>
+
+</div>
+</div>
+
+<!-- LARGE SQUARE -->
+<div class="product-card"
+onclick="openProduct(
+'Large Square Planter 76cm',
+'Modern square planter',
+'KES 11,250',
+'https://www.toptank.com/wp-content/uploads/2024/04/LACPLNTS02_CharcoalGrey_1-500x500.jpg'
+)">
+
+<img src="https://www.toptank.com/wp-content/uploads/2024/04/LACPLNTS02_CharcoalGrey_1-500x500.jpg">
+
+<div class="product-info">
+<h3>Large Square Planter – 76cm</h3>
+<div class="price">KSh 11,250</div>
+
+<div class="product-actions">
+    <button class="cart-btn"
+        onclick="event.stopPropagation();openOrderModal('Large Square Planter 76cm','11250')">
+        <i class='bx bx-cart'></i>
+    </button>
+
+    <button class="order-btn"
+        onclick="event.stopPropagation();openOrderModal('Large Square Planter 76cm','11250')">
+        Order Now
+    </button>
+</div>
+
+</div>
+</div>
+
+<!-- ANGULAR PLANTER -->
+<div class="product-card"
+onclick="openProduct(
+'Angular Planter 76cm',
+'Tall angular modern planter',
+'KES 5,040',
+'https://www.toptank.com/wp-content/uploads/2024/04/LACPLNTS07_Grey_2-500x500.jpg'
+)">
+
+<img src="https://www.toptank.com/wp-content/uploads/2024/04/LACPLNTS07_Grey_2-500x500.jpg">
+
+<div class="product-info">
+<h3>Large Angular Planter – 76cm</h3>
+<div class="price">KSh 5,040</div>
+
+<div class="product-actions">
+    <button class="cart-btn"
+        onclick="event.stopPropagation();openOrderModal('Angular Planter 76cm','5040')">
+        <i class='bx bx-cart'></i>
+    </button>
+
+    <button class="order-btn"
+        onclick="event.stopPropagation();openOrderModal('Angular Planter 76cm','5040')">
+        Order Now
+    </button>
+</div>
+
+</div>
+</div>
+
+<!-- MEDIUM ROUND -->
+<div class="product-card"
+onclick="openProduct(
+'Medium Round Planter 61cm',
+'Medium size modern planter',
+'KES 7,470',
+'https://www.toptank.com/wp-content/uploads/2024/04/LACPLNTS04_CharcoalGrey_6-500x500.jpg'
+)">
+
+<img src="https://www.toptank.com/wp-content/uploads/2024/04/LACPLNTS04_CharcoalGrey_6-500x500.jpg">
+
+<div class="product-info">
+<h3>Medium Round Planter – 61cm</h3>
+<div class="price">KSh 7,470</div>
+
+<div class="product-actions">
+    <button class="cart-btn"
+        onclick="event.stopPropagation();openOrderModal('Medium Round Planter 61cm','7470')">
+        <i class='bx bx-cart'></i>
+    </button>
+
+    <button class="order-btn"
+        onclick="event.stopPropagation();openOrderModal('Medium Round Planter 61cm','7470')">
+        Order Now
+    </button>
+</div>
+
+</div>
+</div>
+
+</div>
+</section>
+<!-- BINS SECTION -->
+
+<section class="category-section" id="bins">
+
+<h2 class="category-title">Bins</h2>
+
+<div class="product-grid">
+
+<!-- 240L -->
+<div class="product-card"
+onclick="openProduct(
+'240L Dustbin',
+'Large capacity waste bin',
+'KES 5,900',
+'https://www.toptank.com/wp-content/uploads/2021/05/LACBIN17_Blue_2-1-500x500.jpg'
+)">
+
+<img src="https://www.toptank.com/wp-content/uploads/2021/05/LACBIN17_Blue_2-1-500x500.jpg">
+
+<div class="product-info">
+<h3>240L Dustbin</h3>
+<div class="price">KSh 5,900</div>
+
+<div class="product-actions">
+
+<button class="cart-btn"
+onclick="event.stopPropagation();
+openOrderModal(
+'240L Dustbin',
+'240 Litres',
+'5900'
+)">
+<i class='bx bx-cart' style="color:#ff6b00; font-size:20px;"></i>
+</button>
+
+<button class="order-btn"
+onclick="event.stopPropagation();
+openOrderModal(
+'240L Dustbin',
+'240 Litres',
+'5900'
+)">
+order
+</button>
+
+</div>
+</div>
+</div>
+
+<!-- 180L -->
+<div class="product-card"
+onclick="openProduct(
+'180L Garbage Bin with Wheels',
+'Durable waste bin with wheels',
+'KES 14,850',
+'https://www.toptank.com/wp-content/uploads/2021/05/LACBIN17_Red_1-500x500.jpg'
+)">
+
+<img src="https://www.toptank.com/wp-content/uploads/2021/05/LACBIN17_Red_1-500x500.jpg">
+
+<div class="product-info">
+<h3>180L Garbage Bin with Wheels</h3>
+<div class="price">KSh 14,850</div>
+
+<div class="product-actions">
+
+<button class="cart-btn"
+onclick="event.stopPropagation();
+openOrderModal(
+'180L Garbage Bin with Wheels',
+'180 Litres',
+'14850'
+)">
+<i class='bx bx-cart' style="color:#ff6b00; font-size:20px;"></i>
+</button>
+
+<button class="order-btn"
+onclick="event.stopPropagation();
+openOrderModal(
+'180L Garbage Bin with Wheels',
+'180 Litres',
+'14850'
+)">
+order
+</button>
+
+</div>
+</div>
+</div>
+
+<!-- 750L -->
+<div class="product-card"
+onclick="openProduct(
+'750L Garbage Bin',
+'Large industrial waste bin',
+'KES 45,450',
+'https://www.toptank.com/wp-content/uploads/2021/05/LACB1N19_Grey_11-500x500.jpg'
+)">
+
+<img src="https://www.toptank.com/wp-content/uploads/2021/05/LACB1N19_Grey_11-500x500.jpg">
+
+<div class="product-info">
+<h3>750L Garbage Bin</h3>
+<div class="price">KSh 45,450</div>
+
+<div class="product-actions">
+
+<button class="cart-btn"
+onclick="event.stopPropagation();
+openOrderModal(
+'750L Garbage Bin',
+'750 Litres',
+'45450'
+)">
+<i class='bx bx-cart' style="color:#ff6b00; font-size:20px;"></i>
+</button>
+
+<button class="order-btn"
+onclick="event.stopPropagation();
+openOrderModal(
+'750L Garbage Bin',
+'750 Litres',
+'45450'
+)">
+order
+</button>
+
+</div>
+</div>
+</div>
+
+<!-- 90L HANDLE -->
+<div class="product-card"
+onclick="openProduct(
+'90L Bin with Wheels & Handle',
+'Mobile waste bin',
+'KES 10,800',
+'https://www.toptank.com/wp-content/uploads/2021/05/LACBIN28_Yellow_7-500x500.jpg'
+)">
+
+<img src="https://www.toptank.com/wp-content/uploads/2021/05/LACBIN28_Yellow_7-500x500.jpg">
+
+<div class="product-info">
+<h3>90L Bin with Wheels & Handle</h3>
+<div class="price">KSh 10,800</div>
+
+<div class="product-actions">
+
+<button class="cart-btn"
+onclick="event.stopPropagation();
+openOrderModal(
+'90L Bin with Wheels & Handle',
+'90 Litres',
+'10800'
+)">
+<i class='bx bx-cart' style="color:#ff6b00; font-size:20px;"></i>
+</button>
+
+<button class="order-btn"
+onclick="event.stopPropagation();
+openOrderModal(
+'90L Bin with Wheels & Handle',
+'90 Litres',
+'10800'
+)">
+order
+</button>
+
+</div>
+</div>
+</div>
+
+<!-- 90L FOOT PEDAL -->
+<div class="product-card"
+onclick="openProduct(
+'90L Bin with Foot Pedal',
+'Hygienic pedal bin',
+'KES 12,825',
+'https://www.toptank.com/wp-content/uploads/2021/05/LACBIN34_Red_6-500x500.jpg'
+)">
+
+<img src="https://www.toptank.com/wp-content/uploads/2021/05/LACBIN34_Red_6-500x500.jpg">
+
+<div class="product-info">
+<h3>90L Bin with Foot Pedal</h3>
+<div class="price">KSh 12,825</div>
+
+<div class="product-actions">
+
+<button class="cart-btn"
+onclick="event.stopPropagation();
+openOrderModal(
+'90L Bin with Foot Pedal',
+'90 Litres',
+'12825'
+)">
+<i class='bx bx-cart' style="color:#ff6b00; font-size:20px;"></i>
+</button>
+
+<button class="order-btn"
+onclick="event.stopPropagation();
+openOrderModal(
+'90L Bin with Foot Pedal',
+'90 Litres',
+'12825'
+)">
+order
+</button>
+
+</div>
+</div>
+</div>
+
+<!-- 90L HEX -->
+<div class="product-card"
+onclick="openProduct(
+'90L Hexagonal Dustbin',
+'Compact outdoor bin',
+'KES 7,020',
+'https://www.toptank.com/wp-content/uploads/2021/05/LACBIN36_Green_5-500x500.jpg'
+)">
+
+<img src="https://www.toptank.com/wp-content/uploads/2021/05/LACBIN36_Green_5-500x500.jpg">
+
+<div class="product-info">
+<h3>90L Hexagonal Dustbin</h3>
+<div class="price">KSh 7,020</div>
+
+<div class="product-actions">
+
+<button class="cart-btn"
+onclick="event.stopPropagation();
+openOrderModal(
+'90L Hexagonal Dustbin',
+'90 Litres',
+'7020'
+)">
+<i class='bx bx-cart' style="color:#ff6b00; font-size:20px;"></i>
+</button>
+
+<button class="order-btn"
+onclick="event.stopPropagation();
+openOrderModal(
+'90L Hexagonal Dustbin',
+'90 Litres',
+'7020'
+)">
+order
+</button>
+
+</div>
+</div>
+</div>
+
+</div>
+</section>
+
+<!-- ROAD SAFETY SECTION -->
+
+<section class="category-section" id="roadsafety">
+
+<h2 class="category-title">Road Safety</h2>
+
+<div class="product-grid">
+
+<!-- ANGULAR ROAD BARRIER -->
+<div class="product-card"
+onclick="openProduct(
+'Angular Road Barrier',
+'Heavy duty road safety barrier',
+'KES 8,775',
+'https://www.toptank.com/wp-content/uploads/2021/05/Road-Barrier_1-e1621257362148-500x500.png'
+)">
+
+<img src="https://www.toptank.com/wp-content/uploads/2021/05/Road-Barrier_1-e1621257362148-500x500.png">
+
+<div class="product-info">
+<h3>Angular Road Barrier</h3>
+<div class="price">KSh 8,775</div>
+
+<div class="product-actions">
+
+<button class="cart-btn"
+onclick="event.stopPropagation();
+openOrderModal(
+'Angular Road Barrier',
+'Standard Unit',
+'8775'
+)">
+<i class='bx bx-cart' style="color:#ff6b00; font-size:20px;"></i>
+</button>
+
+<button class="order-btn"
+onclick="event.stopPropagation();
+openOrderModal(
+'Angular Road Barrier',
+'Standard Unit',
+'8775'
+)">
+order
+</button>
+
+</div>
+</div>
+</div>
+
+<!-- ROAD TRAFFIC CONE -->
+<div class="product-card"
+onclick="openProduct(
+'Road Traffic Cone',
+'High visibility traffic safety cone',
+'KES 2,070',
+'https://www.toptank.com/wp-content/uploads/2021/05/Road-Traffic-Cone_2-500x500.png'
+)">
+
+<img src="https://www.toptank.com/wp-content/uploads/2021/05/Road-Traffic-Cone_2-500x500.png">
+
+<div class="product-info">
+<h3>Road Traffic Cone</h3>
+<div class="price">KSh 2,070</div>
+
+<div class="product-actions">
+
+<button class="cart-btn"
+onclick="event.stopPropagation();
+openOrderModal(
+'Road Traffic Cone',
+'Standard Unit',
+'2070'
+)">
+<i class='bx bx-cart' style="color:#ff6b00; font-size:20px;"></i>
+</button>
+
+<button class="order-btn"
+onclick="event.stopPropagation();
+openOrderModal(
+'Road Traffic Cone',
+'Standard Unit',
+'2070'
+)">
+order
+</button>
+
+</div>
+</div>
+</div>
+
+<!-- SLIMLINE BARRIER -->
+<div class="product-card"
+onclick="openProduct(
+'Slimline Interlockable Road Barrier',
+'Interlockable plastic barrier system',
+'KES 9,270',
+'https://www.toptank.com/wp-content/uploads/2021/05/LACBARRIER04_Red_2-500x500.jpg'
+)">
+
+<img src="https://www.toptank.com/wp-content/uploads/2021/05/LACBARRIER04_Red_2-500x500.jpg">
+
+<div class="product-info">
+<h3>Slimline Interlockable Barrier</h3>
+<div class="price">KSh 9,270</div>
+
+<div class="product-actions">
+
+<button class="cart-btn"
+onclick="event.stopPropagation();
+openOrderModal(
+'Slimline Interlockable Road Barrier',
+'Standard Unit',
+'9270'
+)">
+<i class='bx bx-cart' style="color:#ff6b00; font-size:20px;"></i>
+</button>
+
+<button class="order-btn"
+onclick="event.stopPropagation();
+openOrderModal(
+'Slimline Interlockable Road Barrier',
+'Standard Unit',
+'9270'
+)">
+order
+</button>
+
+</div>
+</div>
+</div>
+
+</div>
+</section>
+
+
+<!-- SANITATION SECTION -->
+
+<section class="category-section" id="sanitation">
+
+<h2 class="category-title">Sanitation</h2>
+
+<div class="product-grid">
+
+<!-- 115CM MANHOLE -->
+<div class="product-card"
+onclick="openProduct(
+'115cm PE Manhole',
+'Durable polyethylene manhole system',
+'KES 20,700',
+'https://www.toptank.com/wp-content/uploads/2021/05/LACMAN01_Black_2-500x500.jpg'
+)">
+
+<img src="https://www.toptank.com/wp-content/uploads/2021/05/LACMAN01_Black_2-500x500.jpg">
+
+<div class="product-info">
+<h3>115cm PE Manhole</h3>
+<div class="price">KSh 20,700</div>
+
+<div class="product-actions">
+
+<button class="cart-btn"
+onclick="event.stopPropagation();
+openOrderModal(
+'115cm PE Manhole',
+'115cm Unit',
+'20700'
+)">
+<i class='bx bx-cart' style="color:#ff6b00; font-size:20px;"></i>
+</button>
+
+<button class="order-btn"
+onclick="event.stopPropagation();
+openOrderModal(
+'115cm PE Manhole',
+'115cm Unit',
+'20700'
+)">
+order
+</button>
+
+</div>
+
+</div>
+</div>
+
+<!-- 140CM MANHOLE -->
+<div class="product-card"
+onclick="openProduct(
+'140cm PE Manhole',
+'Large polyethylene manhole unit',
+'KES 27,900',
+'https://www.toptank.com/wp-content/uploads/2021/05/LACMAN02_NA_1-500x500.jpg'
+)">
+
+<img src="https://www.toptank.com/wp-content/uploads/2021/05/LACMAN02_NA_1-500x500.jpg">
+
+<div class="product-info">
+<h3>140cm PE Manhole</h3>
+<div class="price">KSh 27,900</div>
+
+<div class="product-actions">
+
+<button class="cart-btn"
+onclick="event.stopPropagation();
+openOrderModal(
+'140cm PE Manhole',
+'140cm Unit',
+'27900'
+)">
+<i class='bx bx-cart' style="color:#ff6b00; font-size:20px;"></i>
+</button>
+
+<button class="order-btn"
+onclick="event.stopPropagation();
+openOrderModal(
+'140cm PE Manhole',
+'140cm Unit',
+'27900'
+)">
+order
+</button>
+
+</div>
+
+</div>
+</div>
+
+<!-- 170CM MANHOLE -->
+<div class="product-card"
+onclick="openProduct(
+'170cm PE Manhole',
+'Extra large PE manhole system',
+'KES 31,050',
+'https://www.toptank.com/wp-content/uploads/2021/05/LACMAN03_2-500x500.jpg'
+)">
+
+<img src="https://www.toptank.com/wp-content/uploads/2021/05/LACMAN03_2-500x500.jpg">
+
+<div class="product-info">
+<h3>170cm PE Manhole</h3>
+<div class="price">KSh 31,050</div>
+
+<div class="product-actions">
+
+<button class="cart-btn"
+onclick="event.stopPropagation();
+openOrderModal(
+'170cm PE Manhole',
+'170cm Unit',
+'31050'
+)">
+<i class='bx bx-cart' style="color:#ff6b00; font-size:20px;"></i>
+</button>
+
+<button class="order-btn"
+onclick="event.stopPropagation();
+openOrderModal(
+'170cm PE Manhole',
+'170cm Unit',
+'31050'
+)">
+order
+</button>
+
+</div>
+
+</div>
+</div>
+
+<!-- 190CM MANHOLE -->
+<div class="product-card"
+onclick="openProduct(
+'190cm PE Manhole',
+'Heavy duty large capacity manhole',
+'KES 37,260',
+'https://www.toptank.com/wp-content/uploads/2021/05/LACMAN03_2-1-500x500.jpg'
+)">
+
+<img src="https://www.toptank.com/wp-content/uploads/2021/05/LACMAN03_2-1-500x500.jpg">
+
+<div class="product-info">
+<h3>190cm PE Manhole</h3>
+<div class="price">KSh 37,260</div>
+
+<div class="product-actions">
+
+<button class="cart-btn"
+onclick="event.stopPropagation();
+openOrderModal(
+'190cm PE Manhole',
+'190cm Unit',
+'37260'
+)">
+<i class='bx bx-cart' style="color:#ff6b00; font-size:20px;"></i>
+</button>
+
+<button class="order-btn"
+onclick="event.stopPropagation();
+openOrderModal(
+'190cm PE Manhole',
+'190cm Unit',
+'37260'
+)">
+order
+</button>
+
+</div>
+
+</div>
+</div>
+
+<!-- PIT LATRINE SLAB -->
+<div class="product-card"
+onclick="openProduct(
+'Pit Latrine Slab',
+'Durable reinforced sanitation slab',
+'KES 9,270',
+'https://www.toptank.com/wp-content/uploads/2021/05/pitslab-500x500-1-500x500.jpg'
+)">
+
+<img src="https://www.toptank.com/wp-content/uploads/2021/05/pitslab-500x500-1-500x500.jpg">
+
+<div class="product-info">
+<h3>Pit Latrine Slab</h3>
+<div class="price">KSh 9,270</div>
+
+<div class="product-actions">
+
+<button class="cart-btn"
+onclick="event.stopPropagation();
+openOrderModal(
+'Pit Latrine Slab',
+'Standard Unit',
+'9270'
+)">
+<i class='bx bx-cart' style="color:#ff6b00; font-size:20px;"></i>
+</button>
+
+<button class="order-btn"
+onclick="event.stopPropagation();
+openOrderModal(
+'Pit Latrine Slab',
+'Standard Unit',
+'9270'
+)">
+order
+</button>
+
+</div>
+
+</div>
+</div>
+
+</div>
+</section>
+
+<!-- MISCELLANEOUS SECTION -->
+
+<section class="category-section" id="miscellaneous">
+
+<h2 class="category-title">Miscellaneous</h2>
+
+<div class="product-grid">
+
+<!-- 1 TONNE PALLET -->
+<div class="product-card"
+onclick="openProduct(
+'1 Tonne Pallet',
+'Heavy duty industrial pallet',
+'KES 9,810',
+'https://www.toptank.com/wp-content/uploads/2021/05/LACPLT02_Black_3-500x500.jpg'
+)">
+
+<img src="https://www.toptank.com/wp-content/uploads/2021/05/LACPLT02_Black_3-500x500.jpg">
+
+<div class="product-info">
+<h3>1 Tonne Pallet</h3>
+<div class="price">KSh 9,810</div>
+
+<div class="product-actions">
+
+<button class="cart-btn"
+onclick="event.stopPropagation();
+openOrderModal(
+'1 Tonne Pallet',
+'Standard Unit',
+'9810'
+)">
+<i class='bx bx-cart' style="color:#ff6b00; font-size:20px;"></i>
+</button>
+
+<button class="order-btn"
+onclick="event.stopPropagation();
+openOrderModal(
+'1 Tonne Pallet',
+'Standard Unit',
+'9810'
+)">
+order
+</button>
+
+</div>
+
+</div>
+</div>
+
+<!-- 60L COOLER BOX -->
+<div class="product-card"
+onclick="openProduct(
+'60L TopKool Cooler Box',
+'Medium capacity insulated cooler',
+'KES 9,810',
+'https://www.toptank.com/wp-content/uploads/2021/05/LACCLBOX01_Yellow_60L_5-500x500.jpg'
+)">
+
+<img src="https://www.toptank.com/wp-content/uploads/2021/05/LACCLBOX01_Yellow_60L_5-500x500.jpg">
+
+<div class="product-info">
+<h3>60L TopKool Cooler Box</h3>
+<div class="price">KSh 9,810</div>
+
+<div class="product-actions">
+
+<button class="cart-btn"
+onclick="event.stopPropagation();
+openOrderModal(
+'60L TopKool Cooler Box',
+'60L Unit',
+'9810'
+)">
+<i class='bx bx-cart' style="color:#ff6b00; font-size:20px;"></i>
+</button>
+
+<button class="order-btn"
+onclick="event.stopPropagation();
+openOrderModal(
+'60L TopKool Cooler Box',
+'60L Unit',
+'9810'
+)">
+order
+</button>
+
+</div>
+
+</div>
+</div>
+
+<!-- 80L COOLER BOX -->
+<div class="product-card"
+onclick="openProduct(
+'80L TopKool Cooler Box',
+'Large insulated cooler box',
+'KES 14,940',
+'https://www.toptank.com/wp-content/uploads/2021/05/LACCLBOX02_Blue_80L_5-500x500.jpg'
+)">
+
+<img src="https://www.toptank.com/wp-content/uploads/2021/05/LACCLBOX02_Blue_80L_5-500x500.jpg">
+
+<div class="product-info">
+<h3>80L TopKool Cooler Box</h3>
+<div class="price">KSh 14,940</div>
+
+<div class="product-actions">
+
+<button class="cart-btn"
+onclick="event.stopPropagation();
+openOrderModal(
+'80L TopKool Cooler Box',
+'80L Unit',
+'14940'
+)">
+<i class='bx bx-cart' style="color:#ff6b00; font-size:20px;"></i>
+</button>
+
+<button class="order-btn"
+onclick="event.stopPropagation();
+openOrderModal(
+'80L TopKool Cooler Box',
+'80L Unit',
+'14940'
+)">
+order
+</button>
+
+</div>
+
+</div>
+</div>
+
+<!-- TOPDESK LARGE -->
+<div class="product-card"
+onclick="openProduct(
+'TopDesk School Chair Large',
+'School desk with storage compartment',
+'KES 8,010',
+'https://www.toptank.com/wp-content/uploads/2021/05/LACDESK01_Blue_3-1-500x500.jpg'
+)">
+
+<img src="https://www.toptank.com/wp-content/uploads/2021/05/LACDESK01_Blue_3-1-500x500.jpg">
+
+<div class="product-info">
+<h3>TopDesk School Chair (Large)</h3>
+<div class="price">KSh 8,010</div>
+
+<div class="product-actions">
+
+<button class="cart-btn"
+onclick="event.stopPropagation();
+openOrderModal(
+'TopDesk Chair Large',
+'Large Unit',
+'8010'
+)">
+<i class='bx bx-cart' style="color:#ff6b00; font-size:20px;"></i>
+</button>
+
+<button class="order-btn"
+onclick="event.stopPropagation();
+openOrderModal(
+'TopDesk Chair Large',
+'Large Unit',
+'8010'
+)">
+order
+</button>
+
+</div>
+
+</div>
+</div>
+
+<!-- TOPDESK MEDIUM -->
+<div class="product-card"
+onclick="openProduct(
+'TopDesk School Chair Medium',
+'Compact school desk with storage',
+'KES 6,750',
+'https://www.toptank.com/wp-content/uploads/2021/05/LACDESK01_Blue_2-500x500.jpg'
+)">
+
+<img src="https://www.toptank.com/wp-content/uploads/2021/05/LACDESK01_Blue_2-500x500.jpg">
+
+<div class="product-info">
+<h3>TopDesk School Chair (Medium)</h3>
+<div class="price">KSh 6,750</div>
+
+<div class="product-actions">
+
+<button class="cart-btn"
+onclick="event.stopPropagation();
+openOrderModal(
+'TopDesk Chair Medium',
+'Medium Unit',
+'6750'
+)">
+<i class='bx bx-cart' style="color:#ff6b00; font-size:20px;"></i>
+</button>
+
+<button class="order-btn"
+onclick="event.stopPropagation();
+openOrderModal(
+'TopDesk Chair Medium',
+'Medium Unit',
+'6750'
+)">
+order
+</button>
+
+</div>
+
+</div>
+</div>
+
+</div>
+</section>
+
+</div>
+<!-- END PRODUCTS CONTAINER --><!-- PRODUCT MODAL -->
+
+<div class="modal" id="productModal">
+
+<div class="modal-content">
+
+<span class="close" onclick="closeModal()">&times;</span>
+
+<img id="modalImage" src="">
+
+<h2 id="modalTitle"></h2>
+
+<p id="modalDescription"></p>
+
+<h3 id="modalPrice"></h3>
+
+<button class="order-btn"
+onclick="orderCurrentProduct()">
+order
+</button>
+
+</div>
+
+</div>
+
+<section class="order-section">
+  <div class="container">
+
+    <div class="section-title">
+      <span>Easy Online Ordering</span>
+      <h2>Order Your Tank Online</h2>
+      <p>
+        KenTank is one of the first tank manufacturers in Kenya to offer
+        full online purchasing.
+      </p>
+    </div>
+
+    <div class="steps-grid">
+
+      <div class="step-card">
+        <div class="step-number">1</div>
+        <h3>Browse & Select</h3>
+        <p>Choose your tank size and click "order" on any product.</p>
+      </div>
+
+      <div class="step-card">
+        <div class="step-number">2</div>
+        <h3>Fill Order Form</h3>
+        <p>Enter your name, phone, and delivery location in seconds.</p>
+      </div>
+
+      <div class="step-card">
+        <div class="step-number">3</div>
+        <h3>We Confirm</h3>
+        <p>Our team calls you within 2 hours to confirm and arrange payment.</p>
+      </div>
+
+      <div class="step-card">
+        <div class="step-number">4</div>
+        <h3>Free Delivery</h3>
+        <p>We deliver free to your doorstep within most major Kenyan towns.</p>
+      </div>
+
+    </div>
+
+    <div class="payment-box">
+      <h3>Accepted Payment Methods</h3>
+
+      <div class="payment-grid">
+
+        <div class="payment-card">
+          <h4>M-Pesa</h4>
+          <p>Paybill or Till Number</p>
+        </div>
+
+        <div class="payment-card">
+          <h4>Visa / Mastercard</h4>
+          <p>Secure card payment</p>
+        </div>
+
+        <div class="payment-card">
+          <h4>Bank Transfer / Cheque</h4>
+          <p>For large orders and tenders</p>
+        </div>
+
+      </div>
+
+      <p class="delivery-note">
+        Free delivery within Nairobi, Mombasa, Kisumu, Nakuru, Eldoret and
+        other major towns. Rural delivery rates on request.
+      </p>
+
+    <a href="#" class="shop-btn"
+   onclick="document.getElementById('categories').scrollIntoView({behavior:'smooth'})">
+    SHOP NOW
+</a
+    </div>
+
+  </div>
+</section>
+
+<!-- SECTION WRAPPER -->
+<section style="font-family:Arial,sans-serif;">
+
+  <!-- STATS SECTION -->
+  <section style="background:#081529;padding:70px 5%;">
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:30px;text-align:center;">
+
+      <div>
+        <h2 style="color:#f4a900;font-size:42px;margin:0;">25+</h2>
+        <p style="color:#fff;">Years Experience</p>
+      </div>
+
+      <div>
+        <h2 style="color:#f4a900;font-size:42px;margin:0;">500K+</h2>
+        <p style="color:#fff;">Tanks Installed</p>
+      </div>
+
+      <div>
+        <h2 style="color:#f4a900;font-size:42px;margin:0;">200+</h2>
+        <p style="color:#fff;">Projects Completed</p>
+      </div>
+
+      <div>
+        <h2 style="color:#f4a900;font-size:42px;margin:0;">47</h2>
+        <p style="color:#fff;">Counties Served</p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- INDUSTRY SOLUTIONS -->
+  <section style="background:#081529;padding:80px 5%;text-align:center;">
+
+    <span style="color:#f4a900;font-weight:bold;">
+      BESPOKE SOLUTIONS
+    </span>
+
+    <h2 style="color:#fff;margin-top:10px;">
+      FOR EVERY INDUSTRY
+    </h2>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:25px;margin-top:50px;">
+
+      <div style="border:1px solid rgba(255,255,255,.2);padding:35px;border-radius:10px;">
+        <div style="width:55px;height:55px;background:#f4a900;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:auto;color:#081529;font-size:22px;">
+          💧
+        </div>
+        <h3 style="color:#fff;">Residential Water Storage</h3>
+        <p style="color:#b9c2cf;">
+          Reliable water tanks for homes and apartments.
+        </p>
+      </div>
+
+      <div style="border:1px solid rgba(255,255,255,.2);padding:35px;border-radius:10px;">
+        <div style="width:55px;height:55px;background:#f4a900;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:auto;color:#081529;font-size:22px;">
+          🏭
+        </div>
+        <h3 style="color:#fff;">Industrial Solutions</h3>
+        <p style="color:#b9c2cf;">
+          Large-capacity tanks for factories and processing plants.
+        </p>
+      </div>
+
+      <div style="border:1px solid rgba(255,255,255,.2);padding:35px;border-radius:10px;">
+        <div style="width:55px;height:55px;background:#f4a900;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:auto;color:#081529;font-size:22px;">
+          🌾
+        </div>
+        <h3 style="color:#fff;">Agricultural Storage</h3>
+        <p style="color:#b9c2cf;">
+          Durable storage solutions for farms and irrigation.
+        </p>
+      </div>
+
+    </div>
+
+    <a href="#contact" style="display:inline-block;background:#f4a900;color:#081529;padding:14px 30px;border-radius:5px;text-decoration:none;font-weight:bold;margin-top:40px;">
+      Get Started Today
+    </a>
+
+  </section>
+
+  <!-- TESTIMONIALS -->
+  <section style="background:#f5f5f5;padding:80px 5%;text-align:center;">
+
+    <span style="color:#f4a900;font-weight:bold;">
+      TESTIMONIALS
+    </span>
+
+    <h2 style="color:#081529;">
+      WHAT OUR CUSTOMERS SAY
+    </h2>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:25px;margin-top:50px;">
+
+      <div style="background:#fff;padding:25px;border-radius:10px;border:1px solid #eee;">
+        <div style="color:#f4a900;font-size:20px;">★★★★★</div>
+        <p style="color:#555;">
+          Excellent service and quick delivery. The tank quality exceeded expectations.
+        </p>
+        <strong style="color:#081529;">John M.</strong>
+      </div>
+
+      <div style="background:#fff;padding:25px;border-radius:10px;border:1px solid #eee;">
+        <div style="color:#f4a900;font-size:20px;">★★★★★</div>
+        <p style="color:#555;">
+          Professional installation and friendly support team.
+        </p>
+        <strong style="color:#081529;">Sarah K.</strong>
+      </div>
+
+      <div style="background:#fff;padding:25px;border-radius:10px;border:1px solid #eee;">
+        <div style="color:#f4a900;font-size:20px;">★★★★★</div>
+        <p style="color:#555;">
+          Best water storage solution we've purchased for our farm.
+        </p>
+        <strong style="color:#081529;">David N.</strong>
+      </div>
+
+    </div>
+
+  </section>
+
+  <!-- CONTACT SECTION -->
+  <section id="contact" style="padding:80px 5%;background:#fff;">
+
+    <div style="text-align:center;margin-bottom:50px;">
+      <span style="color:#f4a900;font-weight:bold;">GET IN TOUCH</span>
+      <h2 style="color:#081529;">CONTACT US</h2>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 2fr;gap:40px;">
+
+      <div>
+
+        <div style="border-left:4px solid #f4a900;padding:15px;margin-bottom:15px;background:#fafafa; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+  📞 0736 066 663
+</div>
+
+       
+
+        <div style="border-left:4px solid #f4a900;padding:15px;margin-bottom:15px;background:#fafafa;">
+          📍 Nairobi, Kenya
+        </div>
+
+      </div>
+<form onsubmit="sendToWhatsApp(event)">
+
+  <input type="text" id="name" placeholder="Your Name"
+    style="width:100%;padding:14px;margin-bottom:15px;border:1px solid #ddd;" required>
+
+  <input type="email" id="email" placeholder="Email Address"
+    style="width:100%;padding:14px;margin-bottom:15px;border:1px solid #ddd;" required>
+
+  <input type="tel" id="phone" placeholder="Phone Number"
+    style="width:100%;padding:14px;margin-bottom:15px;border:1px solid #ddd;" required>
+
+  <textarea id="message" rows="5" placeholder="Your Message"
+    style="width:100%;padding:14px;margin-bottom:15px;border:1px solid #ddd;" required></textarea>
+
+  <button type="submit"
+    style="background:#f4a900;color:#081529;border:none;padding:15px 35px;font-weight:bold;cursor:pointer;">
+    SEND MESSAGE
+  </button>
+
+</form>
+
+<script>
+function sendToWhatsApp(e) {
+  e.preventDefault();
+
+  let name = document.getElementById("name").value;
+  let email = document.getElementById("email").value;
+  let phone = document.getElementById("phone").value;
+  let message = document.getElementById("message").value;
+
+  let whatsappMessage =
+`*New Contact Form Submission*
+
+*Name:* ${name}
+*Email:* ${email}
+*Phone:* ${phone}
+
+*Message:*
+${message}`;
+
+  let whatsappURL =
+    "https://wa.me/254784400492?text=" +
+    encodeURIComponent(whatsappMessage);
+
+  window.open(whatsappURL, "_blank");
+}
+</script>
+
+    </div>
+
+  </section>
+
+</section>
+
+<style>
+.container{
+max-width:1200px;
+margin:auto;
+padding:80px 20px;
+}
+
+.section-title{
+text-align:center;
+margin-bottom:50px;
+}
+
+.price-list {
+    margin: 30px 0;
+    overflow-x: auto;
+}
+
+.price-list table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #071c34;
+    color: #fff;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.price-list th {
+    background: #f4b000;
+    color: #000;
+    padding: 18px 25px;
+    text-align: left;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.price-list td {
+    padding: 22px 25px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+
+.price-list td:nth-child(2) {
+    color: #f4b000;
+    font-weight: 700;
+}
+
+.order-btn {
+    display: inline-block;
+    background: #f4b000;
+    color: #000;
+    text-decoration: none;
+    padding: 10px 20px;
+    border-radius: 30px;
+    font-size: 12px;
+    font-weight: 700;
+    transition: all 0.3s ease;
+}
+
+.order-btn:hover {
+    background: #ffd04d;
+    transform: translateY(-2px);
+}
+
+@media (max-width: 768px) {
+    .price-list th,
+    .price-list td {
+        padding: 14px;
+        font-size: 14px;
+    }
+
+    .order-btn {
+        padding: 8px 16px;
+        font-size: 11px;
+    }
+}
+    
+.section-title span{
+color:#ff6b00;
+font-weight:700;
+text-transform:uppercase;
+}
+
+.section-title h2{
+font-size:42px;
+color:#222;
+margin:10px 0;
+}
+
+.section-title p{
+color:#666;
+max-width:700px;
+margin:auto;
+}
+
+.steps-grid,
+.payment-grid,
+.stats-grid,
+.custom-grid,
+.reviews-grid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+gap:25px;
+}
+
+.step-card,
+.payment-card,
+.stat-card,
+.custom-card,
+.review-card,
+.info-box{
+background:#fff;
+padding:30px;
+border-radius:15px;
+box-shadow:0 5px 20px rgba(0,0,0,.08);
+}
+
+.step-number{
+width:60px;
+height:60px;
+background:#ff6b00;
+color:#fff;
+font-size:24px;
+font-weight:bold;
+border-radius:50%;
+display:flex;
+align-items:center;
+justify-content:center;
+margin-bottom:20px;
+}
+
+.payment-box{
+background:#fff7f0;
+padding:40px;
+border-radius:20px;
+margin-top:50px;
+text-align:center;
+}
+
+.delivery-note{
+margin:30px 0;
+color:#666;
+}
+
+.shop-btn,
+.quote-btn{
+display:inline-block;
+background:#ff6b00;
+color:white;
+padding:14px 35px;
+border-radius:50px;
+text-decoration:none;
+font-weight:700;
+}
+
+.stats-section{
+background:#ff6b00;
+}
+
+.stat-card{
+text-align:center;
+}
+
+.stat-card h2{
+color:#ff6b00;
+font-size:42px;
+margin:0;
+}
+
+.center-btn{
+text-align:center;
+margin-top:40px;
+}
+
+.contact-grid{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:40px;
+}
+
+.contact-form{
+display:grid;
+gap:15px;
+}
+
+.contact-form input,
+.contact-form select,
+.contact-form textarea{
+padding:15px;
+border:1px solid #ddd;
+border-radius:10px;
+font-size:16px;
+}
+
+.contact-form button{
+background:#ff6b00;
+color:#fff;
+border:none;
+padding:16px;
+font-size:18px;
+font-weight:700;
+border-radius:10px;
+cursor:pointer;
+}
+
+@media(max-width:768px){
+.contact-grid{
+grid-template-columns:1fr;
+}
+
+.section-title h2{
+font-size:32px;
+}
+}
+/* CALL BUTTON */
+.call-btn{
+    position:fixed;
+    bottom:95px;
+    right:18px;
+    width:56px;
+    height:56px;
+    background:#007BFF;
+    color:#fff;
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    text-decoration:none;
+    font-size:24px;
+    z-index:9999;
+    box-shadow:0 4px 12px rgba(0,0,0,.3);
+    transition:transform .2s ease;
+}
+
+/* WHATSAPP BUTTON */
+.whatsapp-btn{
+    position:fixed;
+    bottom:25px;
+    right:18px;
+    width:56px;
+    height:56px;
+    background:#25D366;
+    color:#fff;
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    text-decoration:none;
+    font-size:26px;
+    z-index:9999;
+    box-shadow:0 4px 12px rgba(0,0,0,.3);
+    transition:transform .2s ease;
+}
+
+/* hover animation */
+.call-btn:hover,
+.whatsapp-btn:hover{
+    transform:scale(1.12);
+}
+</style>
+
+<!-- BOTTOM NAVIGATION -->
+
+<nav class="bottom-nav">
+
+<a href="#" class="active" onclick="goHome()">
+<i class="fas fa-home"></i>
+Home
+</a>
+
+
+
+<a href="#">
+<i class="fas fa-user"></i>
+Account
+</a>
+
+</nav>
+
+<script>
+
+let cartCount = 0;
+
+let currentProduct = "";
+let currentPrice = "";
+
+function showCategories() {
+  document.getElementById('categories').scrollIntoView({
+    behavior: 'smooth'
+  });
+}
+
+function showCategory(category) {
+
+  // hide all category sections
+  document.querySelectorAll(".category-section").forEach(section => {
+    section.style.display = "none";
+  });
+
+  // show only selected category
+  const selected = document.getElementById(category);
+
+  if (selected) {
+    selected.style.display = "block";
+    selected.scrollIntoView({ behavior: "smooth" });
+  }
+}
+
+function openProduct(
+title,
+description,
+price,
+image
+){
+
+currentProduct = title;
+currentPrice = price;
+
+document.getElementById("modalTitle")
+.innerText = title;
+
+document.getElementById("modalDescription")
+.innerText = description;
+
+document.getElementById("modalPrice")
+.innerText = price;
+
+document.getElementById("modalImage")
+.src = image;
+
+document.getElementById("productModal")
+.style.display="flex";
+
+}
+
+function closeModal(){
+
+document.getElementById("productModal")
+.style.display="none";
+
+}
+
+function orderNow(product,price){
+
+cartCount++;
+
+document.getElementById("cartCount")
+.innerText = cartCount;
+
+const phone = "254784400492";
+
+const text =
+`Hello KenTank,
+
+I would like to order:
+
+${product}
+
+Price: KES ${price}`;
+
+window.open(
+`https://wa.me/${phone}?text=${encodeURIComponent(text)}`,
+"_blank"
+);
+
+}
+
+function orderCurrentProduct(){
+
+orderNow(
+currentProduct,
+currentPrice.replace("KES ","")
+);
+
+}
+
+function goHome(){
+  document.querySelectorAll(".category-section").forEach(section => {
+    section.style.display = "block";
+  });
+
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function showCart(){
+
+alert(
+"You currently have " +
+cartCount +
+" item(s) in your cart."
+);
+
+}
+
+function openWhatsapp(){
+
+window.open(
+"https://wa.me/254784400492",
+"_blank"
+);
+
+}
+
+window.onclick = function(event){
+
+const modal =
+document.getElementById("productModal");
+
+if(event.target == modal){
+
+closeModal();
+
+}
+
+};
+
+</script>
+<section id="why" class="why-KenTank">
+
+    <div class="tank-side">
+
+        <div class="floating-card warranty">
+            <div class="icon">🛡️</div>
+            <div>
+                <h4>15 Years</h4>
+                <p>Warranty</p>
+            </div>
+        </div>
+
+        <div class="tank-circle">
+
+            <div class="tank-outline"></div>
+
+            <div class="tank-illustration">
+                <div class="tank-lid"></div>
+                <div class="tank-neck"></div>
+                <div class="tank-body"></div>
+                <div class="tank-base"></div>
+            </div>
+
+        </div>
+
+        <div class="floating-card cert">
+            <div class="icon">☑</div>
+            <div>
+                <h4>KEBS Certified</h4>
+                <p>Quality Assured</p>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="content-side">
+
+        <span class="section-tag">
+            WHY CHOOSE US
+        </span>
+
+        <h2>
+            WHY <span>KenTank?</span>
+        </h2>
+
+        <p class="intro">
+            Over 25 years as Kenya's most trusted water storage brand.
+        </p>
+
+        <div class="feature">
+            <div class="check">✓</div>
+            <div>
+                <h4>HYGIENE FIRST</h4>
+                <p>Food-grade inner liner prevents algae growth for safe drinking water.</p>
+            </div>
+        </div>
+
+        <div class="feature">
+            <div class="check">✓</div>
+            <div>
+                <h4>DOUBLE-LAYER TECHNOLOGY</h4>
+                <p>Patented DOUBLE-wall construction keeps water cooler and adds structural strength.</p>
+            </div>
+        </div>
+
+        <div class="feature">
+            <div class="check">✓</div>
+            <div>
+                <h4>WIDEST RANGE IN KENYA</h4>
+                <p>From 100L household tanks to 24,000L industrial solutions.</p>
+            </div>
+        </div>
+
+        <div class="feature">
+            <div class="check">✓</div>
+            <div>
+                <h4>200+ DEALER NETWORK</h4>
+                <p>Authorised dealers across all 47 counties of Kenya.</p>
+            </div>
+        </div>
+
+        <div class="button-group">
+
+            <a href="#categories" class="btn-primary">
+                SHOP NOW
+            </a>
+
+            <a href="#" class="btn-outline">
+                GET A QUOTE
+            </a>
+
+        </div>
+
+    </div>
+<section class="price-section">
+
+    <div class="price-header">
+
+        <span class="price-tag">
+            WATER TANK PRICES
+        </span>
+
+        <h2>WATER TANK PRICE LIST</h2>
+
+        <p>
+            All prices include VAT. Prices and delivery subject to location and availability.
+        </p>
+
+    </div>
+
+    <!-- Price List Image -->
+ <section class="price-list">
+    <table>
+        <thead>
+            <tr>
+                <th>CAPACITY</th>
+                <th>PRICE (KSH)</th>
+                <th>ORDER</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>✔ 1,000 Litres</td>
+                <td>Ksh. 4,500</td>
+                <td>
+                    <a href="https://wa.me/254784400492?text=Hello,%20I%20would%20like%20to%20order%20a%201,000%20Litres%20Water%20Tank."
+                       target="_blank" class="order-btn">ORDER</a>
+                </td>
+            </tr>
+
+            <tr>
+                <td>✔ 2,000 Litres</td>
+                <td>Ksh. 10,500</td>
+                <td>
+                    <a href="https://wa.me/254784400492?text=Hello,%20I%20would%20like%20to%20order%20a%202,000%20Litres%20Water%20Tank."
+                       target="_blank" class="order-btn">ORDER</a>
+                </td>
+            </tr>
+
+            <tr>
+                <td>✔ 3,000 Litres</td>
+                <td>Ksh. 15,500</td>
+                <td>
+                    <a href="https://wa.me/254784400492?text=Hello,%20I%20would%20like%20to%20order%20a%203,000%20Litres%20Water%20Tank."
+                       target="_blank" class="order-btn">ORDER</a>
+                </td>
+            </tr>
+
+            <tr>
+                <td>✔ 4,000 Litres</td>
+                <td>Ksh. 18,500</td>
+                <td>
+                    <a href="https://wa.me/25478440049292?text=Hello,%20I%20would%20like%20to%20order%20a%204,000%20Litres%20Water%20Tank."
+                       target="_blank" class="order-btn">ORDER</a>
+                </td>
+            </tr>
+
+            <tr>
+                <td>✔ 5,000 Litres</td>
+                <td>Ksh. 24,500</td>
+                <td>
+                    <a href="https://wa.me/254784400492?text=Hello,%20I%20would%20like%20to%20order%20a%205,000%20Litres%20Water%20Tank."
+                       target="_blank" class="order-btn">ORDER</a>
+                </td>
+            </tr>
+
+            <tr>
+                <td>✔ 6,000 Litres</td>
+                <td>Ksh. 27,500</td>
+                <td>
+                    <a href="https://wa.me/254784400492?text=Hello,%20I%20would%20like%20to%20order%20a%206,000%20Litres%20Water%20Tank."
+                       target="_blank" class="order-btn">ORDER</a>
+                </td>
+            </tr>
+
+            <tr>
+                <td>✔ 8,000 Litres</td>
+                <td>Ksh. 32,500</td>
+                <td>
+                    <a href="https://wa.me/254784400492?text=Hello,%20I%20would%20like%20to%20order%20a%208,000%20Litres%20Water%20Tank."
+                       target="_blank" class="order-btn">ORDER</a>
+                </td>
+            </tr>
+
+            <tr>
+                <td>✔ 10,000 Litres</td>
+                <td>Ksh. 46,500</td>
+                <td>
+                    <a href="https://wa.me/254784400492?text=Hello,%20I%20would%20like%20to%20order%20a%2010,000%20Litres%20Water%20Tank."
+                       target="_blank" class="order-btn">ORDER</a>
+                </td>
+            </tr>
+
+            <tr>
+                <td>✔ 15,000 Litres</td>
+                <td>Ksh. 98,500</td>
+                <td>
+                    <a href="https://wa.me/254784400492?text=Hello,%20I%20would%20like%20to%20order%20a%2015,000%20Litres%20Water%20Tank."
+                       target="_blank" class="order-btn">ORDER</a>
+                </td>
+            </tr>
+
+            <tr>
+                <td>✔ 20,000 Litres</td>
+                <td>Ksh. 157,500</td>
+                <td>
+                    <a href="https://wa.me/254784400492?text=Hello,%20I%20would%20like%20to%20order%20a%2020,000%20Litres%20Water%20Tank."
+                       target="_blank" class="order-btn">ORDER</a>
+                </td>
+            </tr>
+
+            <tr>
+                <td>✔ 24,000 Litres</td>
+                <td>Ksh. 192,500</td>
+                <td>
+                    <a href="https://wa.me/254784400492?text=Hello,%20I%20would%20like%20to%20order%20a%2024,000%20Litres%20Water%20Tank."
+                       target="_blank" class="order-btn">ORDER</a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+
+    <div class="price-actions">
+
+
+    </div>
+
+</section>
+</section>
+  </div>
+    <!-- FOOTER -->
+  <footer class="tank-footer">
+
+    <div class="footer-col">
+      <h4>About Us</h4>
+      <p>
+        KenTank is manufactured in Kenya using rotational moulding and produced from high grade polyethylene.
+      </p>
+    </div>
+
+    <div class="footer-col">
+      <h4>Navigation</h4>
+      <a href="#">All Products</a>
+      <a href="#">Custom Products</a>
+      <a href="#">FAQs</a>
+      <a href="#">About Us</a>
+    </div>
+
+    <div class="footer-col">
+      <h4>My Account</h4>
+      <a href="#">My Account</a>
+      <a href="#">Cart</a>
+      <a href="#">Checkout</a>
+    </div>
+
+    <div class="footer-col">
+      <h4>Get In Touch</h4>
+      <p>Lecol Building, Mbaraki Road</p>
+      <p>+2547 36 066 663</p>
+    </div>
+
+  </footer>
+
+</section>
+<!-- WATER TANK SECTION END -->
+</body>
+</html>
+<script>
+
+const sidebar = document.getElementById("sidebar");
+const menuBtn = document.getElementById("menuBtn");
+const closeBtn = document.getElementById("closeBtn");
+const overlay = document.getElementById("overlay");
+
+menuBtn.addEventListener("click", function(){
+    sidebar.classList.add("active");
+    overlay.classList.add("active");
+});
+
+closeBtn.addEventListener("click", closeSidebar);
+overlay.addEventListener("click", closeSidebar);
+
+function closeSidebar(){
+    sidebar.classList.remove("active");
+    overlay.classList.remove("active");
+}
+
+</script>
+<script>
+
+const slides = [
+
+{
+    tag: "KENYA'S #1 WATER STORAGE SOLUTION",
+    title: "KWA MAHITAJI YAKO <span>YOTE YA MAJI</span>",
+    text: "DOUBLE-layered, UV-protected tanks 100L–24,000L. Food-grade polyethylene. Made in Kenya.",
+    bg: "bg.png"
+},
+
+{
+    tag: "QUALITY WATER TANKS",
+    title: "UHIFADHI <span>BORA WA MAJI</span>",
+    text: "Premium quality tanks for homes, schools, institutions and businesses.",
+    bg: "bg.png"
+},
+
+{
+    tag: "AGRICULTURAL SOLUTIONS",
+    title: "TANKS ZA <span>KILIMO</span>",
+    text: "Reliable water storage solutions for irrigation and livestock farming.",
+    bg: "bg.png"
+},
+
+{
+    tag: "FREE DELIVERY ACROSS KENYA",
+    title: "TUNAFIKISHA <span>NCHI NZIMA</span>",
+    text: "Fast and secure delivery across Kenya with professional support.",
+    bg: "bg.png"
+}
+
+];
+
+let currentSlide = 0;
+
+const hero = document.getElementById("hero");
+const heroTag = document.getElementById("heroTag");
+const heroTitle = document.getElementById("heroTitle");
+const heroText = document.getElementById("heroText");
+const dots = document.querySelectorAll(".dot");
+
+function showSlide(index) {
+
+    currentSlide = index;
+
+    const slide = slides[index];
+
+    heroTag.innerHTML = slide.tag;
+    heroTitle.innerHTML = slide.title;
+    heroText.innerHTML = slide.text;
+
+    // ✅ background image (bg.png)
+    hero.style.background = `url('${slide.bg}') center/cover no-repeat`;
+
+    dots.forEach(dot => dot.classList.remove("active"));
+    if (dots[index]) dots[index].classList.add("active");
+}
+
+function nextSlide() {
+    currentSlide = (currentSlide + 1) % slides.length;
+    showSlide(currentSlide);
+}
+
+function prevSlide() {
+    currentSlide = (currentSlide - 1 + slides.length) % slides.length;
+    showSlide(currentSlide);
+}
+
+function goToSlide(index) {
+    showSlide(index);
+}
+
+setInterval(nextSlide, 5000);
+
+showSlide(0);
+
+</script>
+<script>
+function updateTime() {
+    const now = new Date();
+
+    // Day names
+    const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+    const day = days[now.getDay()];
+
+    // Time formatting (12-hour with AM/PM)
+    let hours = now.getHours();
+    let minutes = now.getMinutes();
+    const ampm = hours >= 12 ? "PM" : "AM";
+
+    hours = hours % 12;
+    hours = hours ? hours : 12; // 0 becomes 12
+    minutes = minutes < 10 ? "0" + minutes : minutes;
+
+    const timeString = `${day} ${hours}:${minutes} ${ampm}`;
+
+    document.getElementById("live-time").textContent = timeString;
+}
+
+// update immediately
+updateTime();
+
+// update every minute
+setInterval(updateTime, 60000);
+</script>
+
+
+<script>
+
+let orderProduct = "";
+let orderCapacity = "";
+let orderPrice = "";
+let quantity = 1;
+
+const WHATSAPP_NUMBER = "254784400492";
+
+/* OPEN MODAL */
+function openOrderModal(product, capacity, price) {
+
+    orderProduct = product;
+    orderCapacity = capacity;
+    orderPrice = price;
+
+    document.getElementById("summaryProduct").innerText = product;
+    document.getElementById("summaryCapacity").innerText = capacity;
+    document.getElementById("summaryPrice").innerText = "KSh " + price;
+
+    quantity = 1;
+    document.getElementById("qtyDisplay").innerText = quantity;
+
+    document.getElementById("orderModal").style.display = "flex";
+}
+
+/* CLOSE MODAL */
+function closeOrderModal() {
+    document.getElementById("orderModal").style.display = "none";
+}
+
+/* QUANTITY CONTROL */
+function changeQty(change) {
+    quantity += change;
+    if (quantity < 1) quantity = 1;
+
+    document.getElementById("qtyDisplay").innerText = quantity;
+
+    updateSummaryTotal();
+}
+
+
+
+/* =========================
+   WHATSAPP ORDER SUBMISSION
+========================= */
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    document.getElementById("orderForm").addEventListener("submit", function (e) {
+        e.preventDefault();
+
+        const name = document.getElementById("customerName").value.trim();
+        const phone = document.getElementById("customerPhone").value.trim();
+        const location = document.getElementById("customerLocation").value.trim();
+        const notes = document.getElementById("customerNotes").value.trim();
+
+        const cleanPrice = parseInt(orderPrice.toString().replace(/,/g, ""));
+        const total = quantity * cleanPrice;
+
+        const message =
+`🛒 *New Order – KenTank Kenya*
+
+*Product:* ${orderProduct}
+*Capacity:* ${orderCapacity}
+*Quantity:* ${quantity}
+*Total:* KSh ${total.toLocaleString()}
+
+*Customer Details*
+*Name:* ${name}
+*Phone:* ${phone}
+*Delivery Location:* ${location}
+*Notes:* ${notes || "None"}
+
+_Order placed via KenTank Kenya website_`;
+
+        const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
+
+        window.open(url, "_blank");
+
+        closeOrderModal();
+
+        document.getElementById("orderForm").reset();
+        document.getElementById("qtyDisplay").innerText = "1";
+    });
+
+});
+
+
+function updateSummaryTotal() {
+
+    const cleanPrice = parseInt(orderPrice.toString().replace(/,/g, ""));
+    const total = quantity * cleanPrice;
+
+    // unit price
+    document.getElementById("summaryPrice").innerText =
+        "KSh " + cleanPrice.toLocaleString();
+
+    // amount beside quantity selector
+    document.getElementById("qtyAmount").innerText =
+        "KSh " + total.toLocaleString();
+
+    let totalRow = document.getElementById("summaryTotalRow");
+
+    if (!totalRow) {
+        totalRow = document.createElement("div");
+        totalRow.id = "summaryTotalRow";
+        totalRow.className = "summary-row";
+
+        totalRow.innerHTML = `
+            <span>Total</span>
+            <strong id="summaryTotal"></strong>
+        `;
+
+        document.querySelector(".order-summary").appendChild(totalRow);
+    }
+
+    document.getElementById("summaryTotal").innerText =
+        "KSh " + total.toLocaleString();
+}
+function openOrderModal(product, capacity, price) {
+
+    orderProduct = product;
+    orderCapacity = capacity;
+    orderPrice = price;
+
+    document.getElementById("summaryProduct").innerText = product;
+    document.getElementById("summaryCapacity").innerText = capacity;
+
+    quantity = 1;
+    document.getElementById("qtyDisplay").innerText = quantity;
+
+    document.getElementById("summaryPrice").innerText =
+        "KSh " + parseInt(price).toLocaleString();
+
+    document.getElementById("orderModal").style.display = "flex";
+
+    updateSummaryTotal(); // 🔥 IMPORTANT
+}
+</script>
+<!-- CALL BUTTON -->
+<a href="tel:+254784400492" class="call-btn">
+    <i class='bx bxs-phone'></i>
+</a>
+
+<!-- WHATSAPP BUTTON -->
+<a href="https://wa.me/254784400492" target="_blank" class="whatsapp-btn">
+    <i class='bx bxl-whatsapp'></i>
+</a>
+
+<div id="orderModal" class="order-modal" style="display:none;">
+
+    <div class="order-box">
+
+        <!-- HEADER -->
+        <div class="modal-header">
+            <h3>PLACE YOUR ORDER</h3>
+
+            <button type="button" class="close-btn" onclick="closeOrderModal()">
+                ✕
+            </button>
+        </div>
+
+        <!-- SUMMARY -->
+        <div class="order-summary">
+
+            <h4>ORDER SUMMARY</h4>
+
+            <div class="summary-row">
+                <span>Product</span>
+                <strong id="summaryProduct"></strong>
+            </div>
+
+            <div class="summary-row">
+                <span>Capacity</span>
+                <strong id="summaryCapacity"></strong>
+            </div>
+
+            <div class="summary-row">
+                <span>Unit Price</span>
+                <strong id="summaryPrice"></strong>
+            </div>
+
+            <div class="summary-row">
+                <span>Delivery</span>
+                <strong class="free">FREE</strong>
+            </div>
+
+        </div>
+
+        <!-- FORM -->
+        <form id="orderForm">
+
+            <!-- QUANTITY -->
+           <div class="quantity-box">
+    <label>Quantity</label>
+
+    <div class="qty-row">
+        <div class="qty-controls">
+            <button type="button" onclick="changeQty(-1)">−</button>
+            <span id="qtyDisplay">1</span>
+            <button type="button" onclick="changeQty(1)">+</button>
+        </div>
+
+        <strong id="qtyAmount">KSh 8,500</strong>
+    </div>
+</div>
+
+            <!-- INPUTS -->
+            <input type="text" id="customerName" placeholder="Full Name" required>
+            <input type="tel" id="customerPhone" placeholder="+254 7XX XXX XXX" required>
+            <input type="text" id="customerLocation" placeholder="Delivery Location" required>
+            <textarea id="customerNotes" placeholder="Additional Notes"></textarea>
+
+            <!-- BUTTON GROUP (IMPORTANT IMPROVEMENT) -->
+            <div class="button-group">
+
+                <button type="submit" class="confirm-btn">
+                    CONFIRM ORDER
+                </button>
+
+                <button type="button" class="cancel-btn" onclick="closeOrderModal()">
+                    CANCEL
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+</body>
+</html>
